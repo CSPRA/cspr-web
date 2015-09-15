@@ -11,6 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', 
+  ['as' => 'home', 'uses' => 'HomeController@create']
+);
+Route::post('login', 
+  ['as' => 'login', 'uses' => 'HomeController@store']
+);
+Route::get('dashboard', 
+  ['as' => 'dashboard', 'uses' => 'HomeController@dashboard']
+);
