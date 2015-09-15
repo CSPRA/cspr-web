@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class VolunteerController extends Controller
+class VolunteerController extends APIController
 {
     /**
      * Display a listing of the resource.
@@ -39,7 +39,10 @@ class VolunteerController extends Controller
     {
         //
     }
-
+  public function register(Request $request)
+    {
+        echo $request;
+    }
     /**
      * Display the specified resource.
      *
@@ -49,7 +52,8 @@ class VolunteerController extends Controller
     public function show($id)
     {
         //
- 		return User::findOrFail($id);
+ 		// return User::findOrFail($id);
+		return "dummy user";
     }
 
     /**

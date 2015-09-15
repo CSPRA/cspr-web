@@ -15,10 +15,20 @@
 //     return view('welcome');
 // });
 $api = app('api.router');
+// Route::group(array('prefix' => 'api/v1'), function($api) {
+	$api->version('v1',['namespace' => 'App\Http\Controllers'], function ($api) {
+		$api->group(['prefix' => 'api'], function ($api) {
+			$api->get('volunteer/{id}', 'VolunteerController@show');
+			$api->post('volunteer/register', 'VolunteerController@register');		
+		});
+	   
+	    
+	});
 
-$api->version('v1', function ($api) {
-    $api->get('volunteer/{id}', 'App\Http\ControllersVolunteerController@show');
-});
+// });
+
+
+
 
 Route::get('/', 
   ['as' => 'home', 'uses' => 'HomeController@create']
