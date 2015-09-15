@@ -14,6 +14,11 @@
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+$api = app('api.router');
+
+$api->version('v1', function ($api) {
+    $api->get('volunteer/{id}', 'App\Http\ControllersVolunteerController@show');
+});
 
 Route::get('/', 
   ['as' => 'home', 'uses' => 'HomeController@create']
