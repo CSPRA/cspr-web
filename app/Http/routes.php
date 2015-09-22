@@ -24,3 +24,6 @@ Route::post('login',
 Route::get('dashboard', 
   ['as' => 'dashboard', 'uses' => 'HomeController@dashboard']
 );
+Route::post('volunteer/register',
+  ['as' => 'register','uses' => 'VolunteerController@store']
+);
