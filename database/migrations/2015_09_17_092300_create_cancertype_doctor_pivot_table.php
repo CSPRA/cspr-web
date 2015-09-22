@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class {{class}} extends Migration
+class CreateCancerTypeDoctorPivotTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,11 @@ class {{class}} extends Migration
      */
     public function up()
     {
-        Schema::create('cancertype_doctor', function(Blueprint $table) {
+        Schema::create('cancerType_doctor', function(Blueprint $table) {
             $table->integer('cancertype_id')->unsigned()->index();
-            $table->foreign('cancertype_id')->references('id')->on('cancertypes')->onDelete('cascade');
+            $table->foreign('cancertype_id')->references('id')->on('cancerTypes')->onDelete('cascade');
             $table->integer('doctor_id')->unsigned()->index();
-            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
+            $table->foreign('doctor_id')->references('doctorId')->on('doctors')->onDelete('cascade');
         });
     }
 
@@ -27,6 +27,6 @@ class {{class}} extends Migration
      */
     public function down()
     {
-        Schema::drop('cancertype_doctor');
+        Schema::drop('cancerType_doctor');
     }
 }

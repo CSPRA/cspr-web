@@ -17,10 +17,10 @@ class CreateVounteersTable extends Migration
 	            $table->string('username')->unique();
 	            $table->string('email')->unique();
 	            $table->string('password', 60);
-				$table->string('firstname'),
-				$table->string('lastname'),
-				$table->string('contactNumber'),
-				$table->bool('isVerified'),
+				$table->string('firstname');
+				$table->string('lastname');
+				$table->string('contactNumber');
+				$table->boolean('isVerified');
 	            $table->rememberToken();
 	            $table->timestamps();
 	        });

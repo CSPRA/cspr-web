@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCancerTypeTable extends Migration
+class CreateCancerTypesTable extends Migration
 {
     /**
      * Run the migrations.

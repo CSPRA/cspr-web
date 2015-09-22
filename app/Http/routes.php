@@ -11,11 +11,11 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/', 
+Route::get('home', 
   ['as' => 'home', 'uses' => 'HomeController@create']
 );
 Route::post('login', 
