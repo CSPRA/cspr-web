@@ -13,14 +13,11 @@ class CreateVolunteersTable extends Migration
     public function up()
     {
       	 Schema::create('volunteers', function (Blueprint $table) {
-	            $table->increments('volunteerId');
-	            $table->string('username')->unique();
-	            $table->string('email')->unique();
-	            $table->string('password', 60);
+                $table->integer('userId')->unsigned()->index();
+                $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
 				$table->string('firstname');
 				$table->string('lastname');
 				$table->string('contactNumber');
-                $table->boolean('isContactNumberVerified');
 				$table->boolean('isVerified');
 	            $table->rememberToken();
 	            $table->timestamps();

@@ -4,11 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Volunteer extends Model
+class Doctor extends Model
 {
-    protected $fillable = [
+    //
+        protected $fillable = [
     	'firstname',
     	'lastname',
     	'contactNumber',
     ];
+
 }

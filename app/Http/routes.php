@@ -18,14 +18,19 @@ Route::get('/', function () {
 Route::get('home', 
   ['as' => 'home', 'uses' => 'HomeController@create']
 );
-Route::post('login', 
-  ['as' => 'login', 'uses' => 'HomeController@store']
+Route::post('adminLogin', 
+  ['as' => 'adminLogin', 'uses' => 'HomeController@store']
 );
 Route::get('dashboard', 
   ['as' => 'dashboard', 'uses' => 'HomeController@dashboard']
 );
+
 Route::post('volunteer/register',
   ['as' => 'register','uses' => 'VolunteerController@store']
+);
+
+Route::post('volunteer/login',
+  ['as' => 'login','uses' => 'VolunteerController@login']
 );
 
 Route::get('volunteers',
@@ -35,3 +40,22 @@ Route::get('volunteers',
 Route::get('volunteer/checkAvailability/{username}',
   ['as' => 'checkAvailability','uses' => 'VolunteerController@checkAvailabilty']
 );
+
+Route::post('doctor/register',
+  ['as' => 'register','uses' => 'DoctorController@store']
+);
+
+Route::post('doctor/login',
+  ['as' => 'login','uses' => 'DoctorController@login']
+);
+
+// Route::post('staff/register',
+//   ['as' => 'register','uses' => 'StaffController@store']
+// );
+
+// Route::post('staff/login',
+//   ['as' => 'login','uses' => 'StaffController@login']
+// );
+
+
+

@@ -4,15 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use Illuminate\Http\Response as HttpResponse;
-
 use App\Http\Controllers\Controller;
 
-use App\Volunteer;
-
-use DB;
-
-class VolunteerController extends TokenAuthController
+class StaffController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,43 +16,24 @@ class VolunteerController extends TokenAuthController
     public function index()
     {
         //
-        $volunteers = Volunteer::all();
-        return $volunteers;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function register(Request $request)
     {
         DB::beginTransaction();
-        
+
         $result = $this->register($request);
         $value = json_decode($result,true);
 
         if (array_key_exists('error', $value)) {
             return $result;
         }else {
-            $volunteer = new Volunteer;
-            $volunteer['userId'] = $value['data']['id'];
-            $volunteer['contactNumber'] = $request->input('contactNumber');
-            $volunteer['firstname'] = $request->input('firstname');
-            $volunteer['lastname'] = $request->input('lastname');
+            $staff = new Staff;
+            $staff['userId'] = $value['data']['id'];
+            $staff['contactNumber'] = $request->input('contactNumber');
+            $staff['firstname'] = $request->input('firstname');
+            $staff['lastname'] = $request->input('lastname');
             try {
-                $finalResult = $volunteer->save();
+                $finalResult = $staff->save();
             }catch(\Exception $e) {
             
                 DB::rollback();
@@ -84,7 +59,7 @@ class VolunteerController extends TokenAuthController
             return $result;
         }else {
             try {
-                 $volunteer = DB::table('volunteers')->where('userId', $value['user']['id'])->first();
+                 $staff = DB::table('staffs')->where('userId', $value['user']['id'])->first();
                 }catch(\Exception $e) {
                     return response()->json([
                     'error' => [
@@ -96,33 +71,35 @@ class VolunteerController extends TokenAuthController
                  $loggedUser['id'] = $value['user']['id'];
                  $loggedUser['username'] = $value['user']['name'];
                  $loggedUser['email'] = $value['user']['email'];
-                 $loggedUser['role'] = $value['user']['role'];
-                 $loggedUser['firstname'] = $volunteer['firstname'];
-                 $loggedUser['lastname'] = $volunteer['lastname'];
-                 $loggedUser['contactNumber'] = $volunteer['contactNumber'];
-                 $loggedUser['isVerified'] = $volunteer['isVerified'];
-                 $loggedUser['token'] = $value['user']['token'];
+                 $loggedUser['firstname'] = $staff['firstname'];
+                 $loggedUser['lastname'] = $staff['lastname'];
+                 $loggedUser['contactNumber'] = $staff['contactNumber'];
+                 $loggedUser['isVerified'] = $staff['isVerified'];
+                 $loggedUser['token'] = $staff['user']['token'];
+
+                 //fetch specialization
                  return json_encode($loggedUser);
         }
    }
-
-
-    private function isUsernamePresent($username) {
-        $volunteer = DB::table('volunteers')->where('username', $username)->first();
-        $result = (is_null($volunteer)) ? false : true;
-        return $result;
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
-    private function isEmailPresent($email) {
-        $volunteer = DB::table('volunteers')->where('email', $email)->first();
-        $result = (is_null($volunteer)) ? false : true;
-        return $result;
-
-    }
-
-
-    public function checkAvailabilty($username) {
-       echo json_encode($this->isUsernamePresent($username));
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
     }
 
     /**

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class HomeController extends Controller
+class HomeController extends TokenAuthController
 {
     /**
      * Display a listing of the resource.
@@ -38,13 +38,22 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
-		if ($request['secret'] == 'admin' && $request['name'] == 'super admin') {
-		 return	\Redirect::route('dashboard');
-		}else {
-			$errors = array("'Error in login!");
-		 return \Redirect::route('home')
-			->with('errors', $errors);
-		}
+        $result = $this->authenticate($request);
+        $value = json_decode($result,true);
+        if (array_key_exists('error', $value)) {
+             return \Redirect::route('home')
+            ->with('errors', array($value['error']));
+        }else {
+            return \Redirect::route('dashboard');
+
+        }
+		// if ($request['secret'] == 'admin' && $request['name'] == 'super admin') {
+		//  return	\Redirect::route('dashboard');
+		// }else {
+		// 	$errors = array("'Error in login!");
+		//  return \Redirect::route('home')
+		// 	->with('errors', $errors);
+		// }
     }
 
 	public function dashboard() {

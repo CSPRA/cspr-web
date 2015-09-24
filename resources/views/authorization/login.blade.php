@@ -6,7 +6,7 @@
     @endforeach
 </ul>
 
-{!! Form::open(array('route' => 'login', 'class' => 'form')) !!}
+{!! Form::open(array('route' => 'adminLogin', 'class' => 'form')) !!}
 
 <div class="form-group">
     {!! Form::label('Your Name') !!}
@@ -26,7 +26,7 @@
 
 <div class="form-group">
 	{!! Form::label('Your Password') !!}
-	{!! Form::password('secret',
+	{!! Form::password('password',
 	 				array('class' => 'form-control')) !!}
 	
 </div>
