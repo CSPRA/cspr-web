@@ -27,3 +27,11 @@ Route::get('dashboard',
 Route::post('volunteer/register',
   ['as' => 'register','uses' => 'VolunteerController@store']
 );
+
+Route::get('volunteers',
+  ['as' => 'volunteers','uses' => 'VolunteerController@index']
+);
+
+Route::get('volunteer/checkAvailability/{username}',
+  ['as' => 'checkAvailability','uses' => 'VolunteerController@checkAvailabilty']
+);

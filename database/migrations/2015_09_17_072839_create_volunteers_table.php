@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVounteersTable extends Migration
+class CreateVolunteersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateVounteersTable extends Migration
      */
     public function up()
     {
-      	 Schema::create('vounteers', function (Blueprint $table) {
+      	 Schema::create('volunteers', function (Blueprint $table) {
 	            $table->increments('volunteerId');
 	            $table->string('username')->unique();
 	            $table->string('email')->unique();
@@ -20,6 +20,7 @@ class CreateVounteersTable extends Migration
 				$table->string('firstname');
 				$table->string('lastname');
 				$table->string('contactNumber');
+                $table->boolean('isContactNumberVerified');
 				$table->boolean('isVerified');
 	            $table->rememberToken();
 	            $table->timestamps();

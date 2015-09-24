@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Volunteer;
+
+use DB;
+
 class VolunteerController extends Controller
 {
     /**
@@ -16,6 +20,8 @@ class VolunteerController extends Controller
     public function index()
     {
         //
+        $volunteers = Volunteer::all();
+        return $volunteers;
     }
 
     /**
@@ -36,9 +42,54 @@ class VolunteerController extends Controller
      */
     public function store(Request $request)
     {
+        $volunteer = new Volunteer;
+        $volunteer->username = $request['username'];
+        $volunteer->password = $request['password'];
+        $volunteer->firstname = $request['firstname'];
+        $volunteer->lastname = $request['lastname'];
+        $volunteer->email = $request['email'];
+        $volunteer->contactNumber = $request['contactNumber'];
+
+        if ($this->isUsernamePresent($request['username'])){
+
+        }
+
+
+        //if username already exists?
+        //if email already registered
+        //throw error
+        //else return user
+        $error = $volunteer->save();
+ 
+    // return Response::json(array(
+    //     'error' => false,
+    //     'volunteer' => $volunteer),
+    //     200
+    // );
         //
-		echo json_encode(array('username'=> $request['username'],'password'=>$request['password']));
-// > 		echo $request;
+		echo json_encode($error);
+    }
+
+    public function login() {
+
+    }
+
+    private function isUsernamePresent($username) {
+        $volunteer = DB::table('volunteers')->where('username', $username)->first();
+        $result = (is_null($volunteer)) ? false : true;
+        return $result;
+    }
+
+    private function isEmailPresent($email) {
+        $volunteer = DB::table('volunteers')->where('email', $email)->first();
+        $result = (is_null($volunteer)) ? false : true;
+        return $result;
+
+    }
+
+
+    public function checkAvailabilty($username) {
+       echo json_encode($this->isUsernamePresent($username));
     }
 
     /**
