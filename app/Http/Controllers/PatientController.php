@@ -9,6 +9,12 @@ use App\Patient;
 
 class PatientController extends Controller
 {
+
+    public function __construct()
+    {
+       // $this->middleware('jwt.auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -45,9 +51,9 @@ class PatientController extends Controller
         $patient['registeredBy'] = $request->input('registeredBy');
 
         
-            $patient->save();
+         $patient->save();
         } catch (\Exception $e) {
-            return $e;
+            return $e->getMessage();
         }
 
         return $patient;

@@ -54,7 +54,9 @@ public function __construct()
         // if no errors are encountered we can return a JWT
         // return response()->json(compact('token'));
         $user = DB::table('users')->where('email', $request['email'])->first();
+        $role = DB::table('roles')->where('id', $user['roleId'])->pluck('name');
         $user['token'] = $token;
+        $user['role'] = $role;
          return json_encode(
                 [
                     'user' => $user,
@@ -113,12 +115,23 @@ public function __construct()
         $newUser['name'] = $request->input('username');
         $newUser['password'] = Hash::make($request->input('password'));
         $newUser['email'] = $request->input('email');
-        $newUser['role'] = $request->input('role');
-        $user = User::create($newUser);
+        try {
+             $roleId = DB::table('roles')->where('name', $request->input('role'))->pluck('id');
+        }catch (\Exception $e) {
+            return json_encode([
+                'error' => [
+                    'message' => 'Could not save user'.$e->getMessage(),
+                    'code' => 101
+                ]
+            ], HttpResponse::HTTP_CONFLICT);
+        }
 
+        $newUser['roleId'] = $roleId;
+        $user = User::create($newUser);
      } catch (\Exception $e) {
         return json_encode([
                 'error' => [
+                    'user' => $newUser,
                     'message' => 'Could not save user'.$e->getMessage(),
                     'code' => 101
                 ]

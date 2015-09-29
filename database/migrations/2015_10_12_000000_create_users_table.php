@@ -17,12 +17,12 @@ class CreateUsersTable extends Migration
                         $table->string('name');
                         $table->string('email')->unique();
                         $table->string('password', 60);
-                        $table->enum('role', array('admin', 'staff','doctor','volunteer'));
+                        $table->integer('roleId')->unsigned()->index();
+                        $table->foreign('roleId')->references('id')->on('roles')->onDelete('cascade');
                         $table->rememberToken();
                         $table->timestamps();
                     });
     }
-
     /**
      * Reverse the migrations.
      *
