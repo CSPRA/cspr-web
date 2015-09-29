@@ -87,8 +87,29 @@ public function __construct()
         return response()->json(compact('user'));
     }
 
+    private function isEmailPresent($email) {
+        $user = DB::table('users')->where('email', $email)->first();
+        $result = (is_null($user)) ? false : true;
+        return $result;
+
+    }
+    private function isUsernamePresent($username) {
+        $user = DB::table('users')->where('name', $username)->first();
+        $result = (is_null($user)) ? false : true;
+        return $result;
+    }
+
     public function register(Request $request) {
-        try {
+    if ($this->isEmailPresent($request['email']) || $this->isUsernamePresent($request['username'])) {
+        return json_encode([
+                'error' => [
+                    'message' => 'User is already registered',
+                    'code' => 100
+                ]
+            ], HttpResponse::HTTP_CONFLICT);
+
+    }
+    try {
         $newUser['name'] = $request->input('username');
         $newUser['password'] = Hash::make($request->input('password'));
         $newUser['email'] = $request->input('email');
@@ -98,8 +119,8 @@ public function __construct()
      } catch (\Exception $e) {
         return json_encode([
                 'error' => [
-                    'message' => 'User already exists.',
-                    'code' => 100
+                    'message' => 'Could not save user'.$e->getMessage(),
+                    'code' => 101
                 ]
             ], HttpResponse::HTTP_CONFLICT);
       }

@@ -106,25 +106,6 @@ class VolunteerController extends TokenAuthController
         }
    }
 
-
-    private function isUsernamePresent($username) {
-        $volunteer = DB::table('volunteers')->where('username', $username)->first();
-        $result = (is_null($volunteer)) ? false : true;
-        return $result;
-    }
-
-    private function isEmailPresent($email) {
-        $volunteer = DB::table('volunteers')->where('email', $email)->first();
-        $result = (is_null($volunteer)) ? false : true;
-        return $result;
-
-    }
-
-
-    public function checkAvailabilty($username) {
-       echo json_encode($this->isUsernamePresent($username));
-    }
-
     /**
      * Display the specified resource.
      *

@@ -19,7 +19,11 @@ Route::get('home',
   ['as' => 'home', 'uses' => 'HomeController@create']
 );
 Route::post('adminLogin', 
-  ['as' => 'adminLogin', 'uses' => 'HomeController@store']
+  ['as' => 'adminLogin', 'uses' => 'HomeController@login']
+);
+
+Route::post('adminRegister',
+   ['as' => 'adminRegister', 'uses' => 'HomeController@store']
 );
 Route::get('dashboard', 
   ['as' => 'dashboard', 'uses' => 'HomeController@dashboard']
@@ -37,10 +41,6 @@ Route::get('volunteers',
   ['as' => 'volunteers','uses' => 'VolunteerController@index']
 );
 
-Route::get('volunteer/checkAvailability/{username}',
-  ['as' => 'checkAvailability','uses' => 'VolunteerController@checkAvailabilty']
-);
-
 Route::post('doctor/register',
   ['as' => 'register','uses' => 'DoctorController@store']
 );
@@ -49,13 +49,14 @@ Route::post('doctor/login',
   ['as' => 'login','uses' => 'DoctorController@login']
 );
 
-// Route::post('staff/register',
-//   ['as' => 'register','uses' => 'StaffController@store']
-// );
+Route::post('staff/register',
+  ['as' => 'register','uses' => 'StaffController@store']
+);
 
-// Route::post('staff/login',
-//   ['as' => 'login','uses' => 'StaffController@login']
-// );
+Route::post('staff/login',
+  ['as' => 'login','uses' => 'StaffController@login']
+);
 
-
-
+Route::post('register_patient',
+  ['as' => 'register_patient', 'uses' => 'PatientController@create']
+);

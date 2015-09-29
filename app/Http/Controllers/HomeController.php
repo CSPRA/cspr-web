@@ -36,7 +36,13 @@ class HomeController extends TokenAuthController
      * @param  Request  $request
      * @return Response
      */
-    public function store(Request $request)
+    
+    public function store(Request $request) {
+        $result = $this->register($request);
+        return $result;
+    }
+
+    public function login(Request $request)
     {
         $result = $this->authenticate($request);
         $value = json_decode($result,true);
@@ -47,13 +53,6 @@ class HomeController extends TokenAuthController
             return \Redirect::route('dashboard');
 
         }
-		// if ($request['secret'] == 'admin' && $request['name'] == 'super admin') {
-		//  return	\Redirect::route('dashboard');
-		// }else {
-		// 	$errors = array("'Error in login!");
-		//  return \Redirect::route('home')
-		// 	->with('errors', $errors);
-		// }
     }
 
 	public function dashboard() {
