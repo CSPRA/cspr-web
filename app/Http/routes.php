@@ -57,7 +57,6 @@ Route::post('staff/login',
   ['as' => 'login','uses' => 'StaffController@login']
 );
 
-
 Route::post('register_patient',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'register_patient', 
