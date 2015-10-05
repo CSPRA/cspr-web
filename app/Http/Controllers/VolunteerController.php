@@ -46,6 +46,7 @@ class VolunteerController extends TokenAuthController
     {
         DB::beginTransaction();
         
+        $request['role'] = 'volunteer';
         $result = $this->register($request);
         $value = json_decode($result,true);
 

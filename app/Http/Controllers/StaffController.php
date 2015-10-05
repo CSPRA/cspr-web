@@ -20,7 +20,7 @@ class StaffController extends Controller
     public function register(Request $request)
     {
         DB::beginTransaction();
-
+        $request['role'] = 'staff';
         $result = $this->register($request);
         $value = json_decode($result,true);
 

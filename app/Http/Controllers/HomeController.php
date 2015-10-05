@@ -38,6 +38,7 @@ class HomeController extends TokenAuthController
      */
     
     public function store(Request $request) {
+        $request['role'] = 'admin';
         $result = $this->register($request);
         return $result;
     }

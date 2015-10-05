@@ -30,7 +30,9 @@ class DoctorController extends TokenAuthController
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
+        DB::beginTransaction(); 
+        $request['role'] = 'doctor';
+
         $result = $this->register($request);
         $value = json_decode($result,true);
 
