@@ -76,3 +76,27 @@ Route::post('create_cancer_type',
 Route::get('cancerTypes',
   ['as' => 'cancerTypes', 'uses'=>'QuestionController@getCancerTypes']
   );
+
+Route::post('create_section',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'create_section',
+  'uses' =>'QuestionController@createSection',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::get('sections',
+  ['as' => 'sections', 'uses'=>'QuestionController@getSections']
+  );
+
+Route::post('add_question',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'create_section',
+  'uses' =>'QuestionController@addQuestion',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::get('questions',
+  ['as' => 'questions', 'uses'=>'QuestionController@getQuestions']
+);

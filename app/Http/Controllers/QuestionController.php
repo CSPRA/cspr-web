@@ -8,6 +8,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Response as HttpResponse;
 
 use App\CancerType;
+use App\Section;
+use App\Question;
+
 use DB;
 
 class QuestionController extends Controller
@@ -48,6 +51,50 @@ class QuestionController extends Controller
         $result = CancerType::all();
         return json_encode(['cancerTypes'=>$result]);
     }
+
+    public function createSection(Request $request) {
+        $section['name'] = $request->input('name');
+        $section['description'] = $request->input('description');
+        try {
+            $result = Section::create($section);
+
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not save cancer type'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }
+        return json_encode(['section' =>$result]);
+    }
+
+    public function getSections() {
+        $result = Section::all();
+        return json_encode(['sections'=>$result]);
+    }
+
+    public function addQuestion(Request $request) {
+        $question['title'] = $request->input('title');
+        try {
+            $result = Question::create($question);
+
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not save cancer type'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }
+        return json_encode(['section' =>$result]);
+    }
+
+    public function getQuestions(Request $request) {
+       $result = User::like('name', $request)->get();
+       return json_encode(['questions' =>$result]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
