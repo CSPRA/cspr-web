@@ -45,21 +45,33 @@ class HomeController extends TokenAuthController
 
     public function login(Request $request)
     {
+        $request['role'] = 'admin';
         $result = $this->authenticate($request);
         $value = json_decode($result,true);
         if (array_key_exists('error', $value)) {
-             return \Redirect::route('home')
-            ->with('errors', array($value['error']));
+            return $result;
         }else {
-            return \Redirect::route('dashboard');
-
+            $loggedUser['id'] = $value['user']['id'];
+            $loggedUser['username'] = $value['user']['name'];
+            $loggedUser['email'] = $value['user']['email'];
+            $loggedUser['role'] = $value['user']['role'];
+            $loggedUser['token'] = $value['user']['token'];
+            return json_encode(['user'=>$loggedUser]);
         }
+        // $value = json_decode($result,true);
+        // if (array_key_exists('error', $value)) {
+        //      return \Redirect::route('home')
+        //     ->with('errors', array($value['error']));
+        // }else {
+        //     return \Redirect::route('dashboard');
+
+        // }
     }
 
-	public function dashboard() {
-		return view('home.dashboard');
+    public function dashboard() {
+        return view('home.dashboard');
         
-	}
+    }
 
     /**
      * Display the specified resource.

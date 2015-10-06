@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response as HttpResponse;
 
-class StaffController extends Controller
+use App\Staff;
+
+use DB;
+
+class StaffController extends TokenAuthController
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +22,14 @@ class StaffController extends Controller
     {
         //
     }
-    public function register(Request $request)
+     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function store(Request $request)
     {
         DB::beginTransaction();
         $request['role'] = 'staff';
@@ -40,7 +52,7 @@ class StaffController extends Controller
             
                 return response()->json([
                 'error' => [
-                    'message' => 'Error while saving.',
+                    'message' => 'Error while saving.'.$e,
                     'code' => 101,
                     ]
                  ], HttpResponse::HTTP_CONFLICT);
@@ -53,6 +65,7 @@ class StaffController extends Controller
     }
 
     public function login(Request $request) {
+        $request['role'] = 'staff';
         $result = $this->authenticate($request);
         $value = json_decode($result,true);
         if (array_key_exists('error', $value)) {
@@ -75,10 +88,10 @@ class StaffController extends Controller
                  $loggedUser['lastname'] = $staff['lastname'];
                  $loggedUser['contactNumber'] = $staff['contactNumber'];
                  $loggedUser['isVerified'] = $staff['isVerified'];
-                 $loggedUser['token'] = $staff['user']['token'];
+                 $loggedUser['token'] = $value['user']['token'];
 
-                 //fetch specialization
-                 return json_encode($loggedUser);
+                return json_encode(['user'=>$loggedUser]);
+
         }
    }
     /**
@@ -87,17 +100,6 @@ class StaffController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
     {
         //
     }

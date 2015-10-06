@@ -66,7 +66,7 @@ class VolunteerController extends TokenAuthController
             
                 return response()->json([
                 'error' => [
-                    'message' => 'Error while saving.',
+                    'message' => 'Error while saving.'.$e,
                     'code' => 101,
                     ]
                  ], HttpResponse::HTTP_CONFLICT);
@@ -79,6 +79,7 @@ class VolunteerController extends TokenAuthController
     }
 
     public function login(Request $request) {
+        $request['role'] = 'volunteer';
         $result = $this->authenticate($request);
         $value = json_decode($result,true);
         if (array_key_exists('error', $value)) {
@@ -103,7 +104,7 @@ class VolunteerController extends TokenAuthController
                  $loggedUser['contactNumber'] = $volunteer['contactNumber'];
                  $loggedUser['isVerified'] = $volunteer['isVerified'];
                  $loggedUser['token'] = $value['user']['token'];
-                 return json_encode($loggedUser);
+                 return json_encode(['user'=>$loggedUser]);
         }
    }
 

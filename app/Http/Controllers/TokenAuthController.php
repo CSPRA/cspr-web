@@ -45,23 +45,25 @@ public function __construct()
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return json_encode(['error' => 'invalid_credentials', 'code'=>401]);
+                return json_encode(['error' => 'invalid_credentials', 'code'=>401, 'value'=>$credentials]);
             }
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token', 'code'=>500]);
         }
 
-        // if no errors are encountered we can return a JWT
-        // return response()->json(compact('token'));
-        $user = DB::table('users')->where('email', $request['email'])->first();
-        $role = DB::table('roles')->where('id', $user['roleId'])->pluck('name');
-        $user['token'] = $token;
-        $user['role'] = $role;
-         return json_encode(
-                [
-                    'user' => $user,
-                    // compact('token')
-                ]);
+        try {
+            $user = DB::table('users')->where('email', $request['email'])->first();
+            $role = DB::table('roles')->where('id', $user['roleId'])->pluck('name');
+            if ($role!= $request->input('role')) {
+                return json_encode(['error' => 'User does not exist for this role', 'code'=>401, 'vlaue'=>$request]);
+            }else {
+                $user['token'] = $token;
+                $user['role'] = $role;
+                return json_encode(['user' => $user]);
+            }
+        }catch (JWTException $e) {
+                return json_encode(['error' => 'could not fetch user', 'code'=>401, 'vlaue'=>$request]);
+        }
     }
 
     public function getAuthenticatedUser()
