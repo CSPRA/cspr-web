@@ -54,7 +54,7 @@ class DoctorController extends TokenAuthController
                 'error' => [
                     'message' => $e,
                     'code' => 101,
-                    'value' => $doctor
+                    'inputValue' => $doctor
                     ]
                  ], HttpResponse::HTTP_CONFLICT);
             }

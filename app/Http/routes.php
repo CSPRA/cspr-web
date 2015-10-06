@@ -61,6 +61,18 @@ Route::post('register_patient',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'register_patient', 
    'uses' => 'PatientController@create',
-   'roles' => ['admin', 'staff', 'volunteer']]
+   'roles' => ['admin', 'staff', 'volunteer']
+   ]
 );
 
+Route::post('create_cancer_type',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'create_cancer_type',
+  'uses' =>'QuestionController@createCancerType',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::get('cancerTypes',
+  ['as' => 'cancerTypes', 'uses'=>'QuestionController@getCancerTypes']
+  );

@@ -4,3 +4,11 @@ Homestead.yaml
 Homestead.json
 .env
 .elasticbeanstalk/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+app/.DS_Store
+app/Http/.DS_Store
+app/Http/Controllers/.DS_Store
