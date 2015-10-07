@@ -13,11 +13,9 @@ class RoleTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         //
         if (App::environment() === 'production') {
-            exit('I just stopped you getting fired. Love, Amo.');
+            exit('Do not seed in production environment');
         }
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 0'); // disable foreign key constraints
