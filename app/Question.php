@@ -9,6 +9,7 @@ class Question extends BaseModel
     //
     protected $table = 'questions';
     protected $fillable = [
-    	'title'
+    	'title',
+    	'sectionId'
     ];
 }

@@ -76,13 +76,14 @@ class QuestionController extends Controller
 
     public function addQuestion(Request $request) {
         $question['title'] = $request->input('title');
+        $question['sectionId'] = $request->input('sectionId');
         try {
             $result = Question::create($question);
 
         }catch(\Exception $e) {
             return response()->json([
                 'error' => [
-                    'message' => 'Could not save cancer type'.$e->getMessage(),
+                    'message' => 'Could not save question'.$e->getMessage(),
                     'code' => 101,
                     ]
                  ]);
@@ -90,11 +91,20 @@ class QuestionController extends Controller
         return json_encode(['section' =>$result]);
     }
 
-    public function getQuestions(Request $request) {
-       $result = User::like('name', $request)->get();
+    public function getQuestions($sectionId,$keyword) {
+       $result = Question::like('title', $keyword)->where('sectionId',$sectionId)->get();
        return json_encode(['questions' =>$result]);
     }
 
+
+    public function addOptionGroup(Request $request) {
+
+
+    }
+
+    public function getOptionGroups(Request $request) {
+
+    }
     /**
      * Show the form for creating a new resource.
      *

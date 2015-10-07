@@ -97,6 +97,6 @@ Route::post('add_question',
   ]
 );
 
-Route::get('questions',
+Route::get('questions/{sectionId}/{keywords}',
   ['as' => 'questions', 'uses'=>'QuestionController@getQuestions']
 );
