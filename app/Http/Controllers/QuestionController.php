@@ -10,6 +10,8 @@ use Illuminate\Http\Response as HttpResponse;
 use App\CancerType;
 use App\Section;
 use App\Question;
+use App\OptionGroup;
+use App\Option;
 
 use DB;
 
@@ -88,21 +90,73 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['section' =>$result]);
+        return json_encode(['question' =>$result]);
     }
 
-    public function getQuestions($sectionId,$keyword) {
-       $result = Question::like('title', $keyword)->where('sectionId',$sectionId)->get();
-       return json_encode(['questions' =>$result]);
+    public function getQuestions($sectionId=null,$keyword=null) {
+        $result = Question::like('title', $keyword)->where('sectionId',$sectionId)->get();
+        return json_encode(['questions' =>$result]);
     }
 
 
     public function addOptionGroup(Request $request) {
+        $optionGroup['name'] = $request->input('name');
+        $optionGroup['sectionId'] = $request->input('sectionId');
+        try {
+            $result = OptionGroup::create($optionGroup);
 
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not save optionGroup'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }
+        return json_encode(['optionGroup' =>$result]);
 
     }
 
-    public function getOptionGroups(Request $request) {
+    public function getOptionGroups($sectionId=null) {
+        $result = DB::table('option_groups')->where('sectionId', $sectionId)->get();
+        return json_encode(['optionGroups' =>$result]);
+    }
+
+    public function addOptions($groupId,Request $request) {
+        $list = $request->input('options');
+        var_dump($list);
+        $optionData = array();
+
+        foreach ($list as $option) {
+            $option['groupId'] = $groupId;
+            $optionData[] = $option;
+        }
+        try {
+               $result = Option::insert($optionData);
+
+             }catch(\Exception $e) {
+                   return response()->json([
+                  'error' => [
+                      'message' => 'Could not save options'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+            }
+        return json_encode(['result' =>$result]);
+    }
+
+    public function getOptions($groupId) {
+        $result = DB::table('options')->where('groupId', $groupId)->get();
+        return json_encode(['options' =>$result]);
+    }
+    public function removeOption($optionId) {
+
+    }
+
+    public function removeAllOptions($groupId) {
+
+    }
+    public function addOption($groupId,Request $request) {
 
     }
     /**

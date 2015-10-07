@@ -17,7 +17,8 @@ class CreateQuestionsTable extends Migration
                 $table->increments('id');
                 $table->string('title');
                 $table->integer('sectionId')->unsigned()->index()->nullable();
-                $table->foreign('sectionId')->references('id')->on('sections')->onDelete('set null');                $table->timestamps();
+                $table->foreign('sectionId')->references('id')->on('sections')->onDelete('set null');
+                $table->timestamps();
             });
     }
 

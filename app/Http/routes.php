@@ -91,12 +91,36 @@ Route::get('sections',
 
 Route::post('add_question',
   ['middleware' => ['jwt.auth','roles'],
-  'as' =>'create_section',
+  'as' =>'add_question',
   'uses' =>'QuestionController@addQuestion',
   'roles' => ['admin','staff']
   ]
 );
 
-Route::get('questions/{sectionId}/{keywords}',
+Route::get('questions/{sectionId?}/{keywords?}',
   ['as' => 'questions', 'uses'=>'QuestionController@getQuestions']
+);
+
+Route::post('add_optionGroup',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'add_optionGroup',
+  'uses' =>'QuestionController@addOptionGroup',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::get('optionGroups/{sectionId?}',
+  ['as' => 'optionGroups', 'uses'=>'QuestionController@getOptionGroups']
+);
+
+Route::post('add_options/{groupId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'add_options',
+  'uses' =>'QuestionController@addOptions',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::get('options/{groupId?}',
+  ['as' => 'options', 'uses'=>'QuestionController@getOptions']
 );
