@@ -15,9 +15,12 @@ class CreateOptionsTable extends Migration
         //
         Schema::create('options', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name');
+                $table->string('name')->unique();
+                $table->integer('order');
                 $table->integer('groupId')->unsigned()->index();
-                $table->foreign('groupId')->references('id')->on('optionGroups')->onDelete('cascade');                $table->timestamps();
+                $table->foreign('groupId')->references('id')->on('option_groups')->onDelete('cascade');
+                $table->unique(array('order', 'groupId'));
+                $table->timestamps();
             });
     }
 

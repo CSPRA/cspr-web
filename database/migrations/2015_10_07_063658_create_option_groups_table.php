@@ -13,11 +13,12 @@ class CreateOptionGroupsTable extends Migration
     public function up()
     {
         //
-        Schema::create('optionGroups', function (Blueprint $table) {
+        Schema::create('option_groups', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name');
+                $table->string('name')->unique();
                 $table->integer('sectionId')->unsigned()->index()->nullable();
-                $table->foreign('sectionId')->references('id')->on('sections')->onDelete('set null');                $table->timestamps();
+                $table->foreign('sectionId')->references('id')->on('sections')->onDelete('set null');  
+                $table->timestamps();
             });
     }
 
@@ -29,7 +30,7 @@ class CreateOptionGroupsTable extends Migration
     public function down()
     {
         //
-         Schema::drop('optionGroups');
+         Schema::drop('option_groups');
 
     }
 }

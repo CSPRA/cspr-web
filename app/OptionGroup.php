@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class OptionGroup extends Model
 {
     //
-    protected $table = 'optionGroups';
+    protected $table = 'option_groups';
     
     protected $fillable = [
     	'name',
