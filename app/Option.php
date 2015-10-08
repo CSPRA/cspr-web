@@ -11,7 +11,8 @@ class Option extends Model
     
     protected $fillable = [
     	'name',
-    	'groupId'
+    	'groupId',
+    	'order'
     ];
 
     public function group()

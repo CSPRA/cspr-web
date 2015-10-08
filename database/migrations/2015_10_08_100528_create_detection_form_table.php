@@ -17,7 +17,7 @@ class CreateDetectionFormTable extends Migration
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->integer('cancerId')->unsigned()->index();
-            $table->foreign('cancerId')->references('id')->on('cancerTypes')->onDelete('cascade');
+            $table->foreign('cancerId')->references('id')->on('cancer_types')->onDelete('cascade');
             $table->integer('createdBy')->unsigned()->nullable();
             $table->foreign('createdBy')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
