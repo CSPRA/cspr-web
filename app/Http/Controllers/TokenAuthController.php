@@ -42,7 +42,7 @@ public function __construct()
   public function authenticate(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
+        
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
                 return json_encode(['error' => 'invalid_credentials', 'code'=>401, 'value'=>$credentials]);
@@ -55,7 +55,7 @@ public function __construct()
             $user = DB::table('users')->where('email', $request['email'])->first();
             $role = DB::table('roles')->where('id', $user['roleId'])->pluck('name');
             if ($role!= $request->input('role')) {
-                return json_encode(['error' => 'User does not exist for this role', 'code'=>401, 'vlaue'=>$request]);
+                return json_encode(['error' => 'User does not exist for this role', 'code'=>401, 'value'=>$request]);
             }else {
                 $user['token'] = $token;
                 $user['role'] = $role;

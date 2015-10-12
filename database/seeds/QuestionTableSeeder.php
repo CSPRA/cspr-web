@@ -28,13 +28,13 @@ class QuestionTableSeeder extends Seeder
         
         Question::create([
             'id'            => 2,
-            'title'          => 'Do you chew tobacco?',
-            'sectionId'   => 1]);
+            'title'         => 'Do you chew tobacco?',
+            'sectionId'     => 1]);
         
         Question::create([
             'id'            => 3,
-            'title'          => 'Do you snuff?',
-            'sectionId'   => 1]);
+            'title'         => 'Do you snuff?',
+            'sectionId'     => 1]);
         
         Question::create([
             'id'            => 4,
@@ -66,218 +66,341 @@ class QuestionTableSeeder extends Seeder
             'title'          => 'Choose junk foods you generally consume?',
             'sectionId'   => 1]);
 
-        Question::create([
+         Question::create([
             'id'            => 10,
-            'title'          => 'Choose junk foods you generally consume?',
-            'sectionId'   => 1]);  
-
-        Question::create([
-            'id'            => 11,
             'title'          => 'What was your age when you started this habit?',
             'sectionId'   => 1]);  
 
 		Question::create([
-            'id'            => 12,
+            'id'            => 11,
             'title'          => 'Mention quantity in a day?',
             'sectionId'   => 1]);  
 
 		Question::create([
-            'id'            => 13,
-            'title'          => 'What is/was the duration of this habit in years?',
+            'id'            => 12,
+            'title'          => 'What is(was) the duration of this habit in years?',
             'sectionId'   => 1]);  
 
 
         Question::create([
-            'id'            => 14,
+            'id'            => 13,
             'title'          => 'Is there any change in bowel or bladder habits?',
             'sectionId'   => 3]);
 
         Question::create([
-            'id'            => 15,
+            'id'            => 14,
             'title'          => 'Have you noticed any unusual bleeding?',
             'sectionId'   => 3]);       
         Question::create([
-            'id'            => 16,
+            'id'            => 15,
             'title'          => 'Have you experienced any indigestion / loss of appetite / loss of weight?',
             'sectionId'   => 3]);       
         Question::create([
-            'id'            => 17,
+            'id'            => 16,
             'title'          => 'Have you noticed any change in your birth marks or warts?',
             'sectionId'   => 3]);       
 
         Question::create([
-            'id'            => 18,
-            'title'          => 'Are you experiencing anychronic cough / hoarsness / difficulty in swallowing?',
+            'id'            => 17,
+            'title'          => 'Are you experiencing any chronic cough / hoarsness / difficulty in swallowing?',
             'sectionId'   => 3]);       
 
         Question::create([
-            'id'            => 19,
+            'id'            => 18,
             'title'          => 'Is there any ulcer or swelling anywhere (including breasts)?',
             'sectionId'   => 3]);
 
         Question::create([
-            'id'            => 20,
+            'id'            => 19,
             'title'          => 'Is there any white patch in your mouth?',
             'sectionId'   => 3]);
     
     	Question::create([
-            'id'            => 21,
-            'title'          => 'Are you experincing Any excess urination / excess thirst / excess hunger / giddiness?',
+            'id'            => 20,
+            'title'          => 'Are you experincing any excess urination / excess thirst / excess hunger / giddiness?',
             'sectionId'   => 3]);
 
 		Question::create([
-            'id'            => 22,
+            'id'            => 21,
             'title'          => 'Specify any other Symptoms?',
             'sectionId'   => 3]);
 
 
 		Question::create([
-            'id'            => 23,
+            'id'            => 22,
             'title'          => 'Is Gynecology History Applicable?',
             'sectionId'   => 4]);
 
 
 		Question::create([
-            'id'            => 24,
+            'id'            => 23,
             'title'          => 'What was your age when you got married?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 25,
+            'id'            => 24,
             'title'          => 'What was your age Menarche?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 26,
+            'id'            => 25,
             'title'          => 'What was your age at first delivery?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 27,
+            'id'            => 26,
             'title'          => 'What was your age at last delivery?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 28,
+            'id'            => 27,
             'title'          => 'What was your age of Menopause?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 29,
+            'id'            => 28,
             'title'          => 'Is Obstetric History Applicable?',
             'sectionId'   => 4]);
 
 
 		Question::create([
-            'id'            => 30,
+            'id'            => 29,
             'title'          => 'What is the number of pregnacies?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 31,
+            'id'            => 30,
             'title'          => 'What is the number of abortions?',
             'sectionId'   => 4]);
 
 
 		Question::create([
-            'id'            => 32,
+            'id'            => 31,
             'title'          => 'What is the number of living children?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 33,
+            'id'            => 32,
             'title'          => 'Are you pregnant currently?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 34,
+            'id'            => 33,
             'title'          => 'What is your feeding method?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 35,
+            'id'            => 34,
             'title'          => 'Is Menstural History Applicable?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 36,
+            'id'            => 35,
             'title'          => 'Select applicable issues related menstural health',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 37,
+            'id'            => 36,
             'title'          => 'What are your methods of family planning?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 38,
+            'id'            => 37,
             'title'          => 'Specify other methods of family planning?',
             'sectionId'   => 4]);
 	
 		Question::create([
+            'id'            => 38,
+            'title'          => 'Is Gynecological Examination applicable?',
+            'sectionId'   => 4]);
+
+		Question::create([
             'id'            => 39,
-            'title'          => 'Is Gynecological Examination applicable?',
-            'sectionId'   => 4]);
-
-		Question::create([
-            'id'            => 40,
-            'title'          => 'Is Gynecological Examination applicable?',
-            'sectionId'   => 4]);
-
-		Question::create([
-            'id'            => 41,
             'title'          => 'How is condition of cervix(PS)?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 42,
+            'id'            => 40,
             'title'          => 'Is Cervicitis detected(PS)?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 43,
+            'id'            => 41,
             'title'          => 'Is Ectopy detected(PS)?',
             'sectionId'   => 4]);
 
 		Question::create([
-            'id'            => 44,
+            'id'            => 42,
             'title'          => 'Is there contact bleeding(PS)?',
             'sectionId'   => 4]);
 
-	Question::create([
-            'id'            => 45,
+    	Question::create([
+            'id'            => 43,
             'title'          => 'Is WDPV detected(PS)?',
             'sectionId'   => 4]);
 
-	Question::create([
-            'id'            => 46,
+    	Question::create([
+            'id'            => 44,
             'title'          => 'Specify any sort of growth(PS)',
             'sectionId'   => 4]);
 
-	Question::create([
-            'id'            => 47,
+    	Question::create([
+            'id'            => 45,
             'title'          => 'Specify condition of PV',
             'sectionId'   => 4]);
 
-	Question::create([
-            'id'            => 48,
+    	Question::create([
+            'id'            => 46,
             'title'          => 'Specify condition of PR',
             'sectionId'   => 4]);
 
-	Question::create([
-            'id'            => 49,
+    	Question::create([
+            'id'            => 47,
             'title'          => 'Specify necessary investigations to be done',
             'sectionId'   => 4]);
 
-	Question::create([
-            'id'            => 50,
-            'title'          => 'What is the result of clinical diagnosis?',
-            'sectionId'   => 4]);
+    	Question::create([
+                'id'            => 48,
+                'title'          => 'What is the result of clinical diagnosis?',
+                'sectionId'   => 4
+                ]);
 
-	Question::create([
-            'id'            => 51,
-            'title'          => 'Choose chronics diseases present in family?',
-            'sectionId'   => 2]);
+    	Question::create([
+                'id'            => 49,
+                'title'         => 'Choose chronics diseases present in family?',
+                'sectionId'     => 2 
+        ]);
+
+        Question::create([
+                'id'            => 50,
+                'title'         => 'Medical Reports',
+                'sectionId'     => 4          
+            ]);
+
+        Question::create([
+                'id'            => 51,
+                'title'         => 'CVS',
+                'description'   => 'Enter readings for CVS if available.',
+                'sectionId'     => 4           
+            ]);
+
+        Question::create([
+                'id'            => 52,
+                'title'         => 'BP',
+                'description'   => 'Enter readings for BP if available.',
+                'sectionId'     => 4           
+            ]);
+
+        Question::create([
+                'id'            => 53,
+                'title'         => 'Pulse',
+                'description'   => 'Enter readings for Pulse if available.',
+                'sectionId'     => 4           
+            ]);
+        Question::create([
+                'id'            => 54,
+                'title'         => 'RS',
+                'description'   => 'Enter readings for RS if available.',
+                'sectionId'     => 4           
+            ]);
+        Question::create([
+                'id'            => 55,
+                'title'         => 'Liver',
+                'description'   => 'Enter readings for Liver if available.',
+                'sectionId'     => 4            
+            ]);
+        Question::create([
+                'id'            => 56,
+                'title'         => 'Spleen',
+                'description'   => 'Enter readings for Spleen if available.',
+                'sectionId'     => 4            
+            ]);
+
+        Question::create([
+                'id'            => 57,
+                'title'         => 'Lymphnodes',
+                'description'   => 'Enter readings for Lymphnodes if available.',
+                'sectionId'     => 4           
+            ]);
+
+        Question::create([
+                'id'            => 58,
+                'title'         => 'Surgical Reports',
+                'sectionId'     => 4            
+            ]);
+
+        Question::create([
+                'id'            => 59,
+                'title'         => 'Breasts',
+                'description'   => 'Enter details of breasts surgery if applicable.',
+                'sectionId'     => 4            
+            ]);
+       Question::create([
+                'id'            => 60,
+                'title'         => 'Thyroid',
+                'description'   => 'Enter details of thyroid related problems if applicable.',
+                'sectionId'     => 4           
+            ]);
+
+       Question::create([
+                'id'            => 61,
+                'title'         => 'Bones & Skin',
+                'description'   => 'Enter details of bones & skin surgery if applicable.',
+                'sectionId'     => 4           
+            ]);
+
+       Question::create([
+                'id'            => 62,
+                'title'         => 'Tetses',
+                'description'   => 'Enter details of testes related medication if applicable.',
+                'sectionId'     => 4           
+            ]);
+
+       Question::create([
+                'id'            => 63,
+                'title'         => 'PR',
+                'description'   => 'Enter details PR if applicable.',
+                'sectionId'     => 4           
+            ]);
+       Question::create([
+                'id'            => 64,
+                'title'         => 'PA',
+                'description'   => 'Enter details PA if applicable.',
+                'sectionId'     => 4            
+            ]);
+       Question::create([
+                'id'            => 65,
+                'title'         => 'Head or Neck',
+                'description'   => 'Enter details Head or Neck surgeryif applicable.',
+                'sectionId'     => 4           
+            ]);
+       Question::create([
+                'id'            => 66,
+                'title'         => 'Pharynx',
+                'description'   => 'Enter details Pharynx if applicable.',
+                'sectionId'     => 4           
+            ]);
+       Question::create([
+                'id'            => 67,
+                'title'         => 'Larynx',
+                'description'   => 'Enter details Larynx if applicable.',
+                'sectionId'     => 4            
+            ]);
+       Question::create([
+                'id'            => 68,
+                'title'         => 'Post 1/3 Tongue',
+                'sectionId'     => 4            
+            ]);
+       Question::create([
+                'id'            => 69,
+                'title'         => 'Oral & Dental',
+                'sectionId'     => 4           
+            ]);
+       Question::create([
+                'id'            => 70,
+                'title'         => 'Lukoplakia',
+                'sectionId'     => 4           
+            ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 1'); // enable foreign key constraints
     }

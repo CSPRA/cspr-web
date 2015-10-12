@@ -12,4 +12,8 @@ class Question extends BaseModel
     	'title',
     	'sectionId'
     ];
+    public function section()
+    {
+        return $this->belongsTo('sections');
+    }
 }

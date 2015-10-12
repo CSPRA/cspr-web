@@ -124,3 +124,23 @@ Route::post('add_options/{groupId}',
 Route::get('options/{groupId?}',
   ['as' => 'options', 'uses'=>'QuestionController@getOptions']
 );
+
+Route::post('create_detection_form',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'create_detection_form',
+  'uses' =>'DiagnosisController@createDetectionForm',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::post('add_query/{formId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'add_query',
+  'uses' =>'DiagnosisController@addQueryToDetectionForm',
+  'roles' => ['admin','staff']
+  ]
+);
+
+Route::get('queries/{formId?}',
+  ['as' => 'queries', 'uses'=>'DiagnosisController@fetchQueryForDetectionForm']
+);

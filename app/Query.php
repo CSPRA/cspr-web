@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Section;
+
 class Query extends Model
 {
     //
@@ -19,4 +21,9 @@ class Query extends Model
     	'parentQueryId',
     	'units'
     ];
+
+    public function section()
+    {
+        return $this->belongsTo('Section');
+    }
 }

@@ -13,7 +13,7 @@ class CreateCancerTypesTable extends Migration
     public function up()
     {
         //
-		 Schema::create('cancerTypes', function (Blueprint $table) {
+		 Schema::create('cancer_types', function (Blueprint $table) {
 	            $table->increments('id');
 	            $table->string('name')->unique();
 	            $table->string('description');
@@ -29,7 +29,7 @@ class CreateCancerTypesTable extends Migration
     public function down()
     {
         //
-        Schema::drop('cancerTypes');
+        Schema::drop('cancer_types');
 
     }
 }

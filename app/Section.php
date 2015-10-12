@@ -12,4 +12,18 @@ class Section extends Model
     	'name',
     	'description',
     ];
+
+    public function optionGroups()
+    {
+        return $this->hasMany('App\OptionGroup', 'sectionId', 'id');
+    }
+    public function questions()
+    {
+        return $this->hasMany('App\Question','sectionId','id');
+    }
+
+    public function queries()
+    {
+    	return $this->hasMany('App\Query','sectionId','id');
+    }
 }

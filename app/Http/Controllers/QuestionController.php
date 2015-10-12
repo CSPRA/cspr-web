@@ -77,7 +77,7 @@ class QuestionController extends Controller
     }
 
     public function addQuestion(Request $request) {
-        $question['title'] = $request->input('title');
+        $question['title'] = $this->mysql_real_escape_string($request->input('title'));
         $question['sectionId'] = $request->input('sectionId');
         try {
             $result = Question::create($question);
@@ -149,6 +149,8 @@ class QuestionController extends Controller
         $result = DB::table('options')->where('groupId', $groupId)->get();
         return json_encode(['options' =>$result]);
     }
+
+   
     public function removeOption($optionId) {
 
     }
@@ -159,67 +161,7 @@ class QuestionController extends Controller
     public function addOption($groupId,Request $request) {
 
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($id)
     {
         //

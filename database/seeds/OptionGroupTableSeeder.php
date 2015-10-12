@@ -26,37 +26,49 @@ class OptionGroupTableSeeder extends Seeder
             'name'          => 'Habit Status',
             'sectionId'     => 1,
         ]);
+
         OptionGroup::create([
             'id'            => 2,
-            'name'          => 'Non-Veg Foods',
+            'name'          => 'Food Preferences',
             'sectionId'     => 1,
         ]);
         OptionGroup::create([
             'id'            => 3,
-            'name'          => 'Junk Foods',
+            'name'          => 'Non-Veg Foods',
             'sectionId'     => 1,
         ]);
         OptionGroup::create([
             'id'            => 4,
+            'name'          => 'Junk Foods',
+            'sectionId'     => 1,
+        ]);
+        OptionGroup::create([
+            'id'            => 5,
             'name'          => 'Chronic Diseases',
             'sectionId'     => 2,
         ]);
         OptionGroup::create([
-            'id'            => 5,
+            'id'            => 6,
             'name'          => 'Menstural Information',
-            'sectionId'     => 3,
+            'sectionId'     => 4,
         ]);
     	
     	OptionGroup::create([
-            'id'            => 6,
+            'id'            => 7,
             'name'          => 'Familiy Planning Methods',
-            'sectionId'     => 3,
+            'sectionId'     => 4,
         ]);
 
         OptionGroup::create([
-            'id'            => 7,
+            'id'            => 8,
             'name'          => 'Clinical Investigations',
-            'sectionId'     => 3,
+            'sectionId'     => 4,
+        ]);
+
+        OptionGroup::create([
+            'id'            => 9,
+            'name'          => 'Feeding Methods',
+            'sectionId'     => 4,
         ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 1'); // enable foreign key constraints
