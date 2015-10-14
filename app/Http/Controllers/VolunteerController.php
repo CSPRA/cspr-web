@@ -108,6 +108,76 @@ class VolunteerController extends TokenAuthController
         }
    }
 
+   public function fetchVolunteerEvents() {
+     $result = json_decode($this->getAuthenticatedUser());
+     $events = DB::table('event_assignments')
+                ->join('events', 'events.id', '=', 'event_assignments.eventId')
+                ->join('cancer_types','events.cancerId','=', 'cancer_types.id')
+                ->leftjoin('detection_form','events.formId','=','events.formId')
+                ->select('events.id','events.name as eventName',
+                        'events.eventType',
+                        'event_assignments.startingDate','event_assignments.endingDate',
+                        'events.formId','detection_form.name as formName',
+                        'detection_form.description as formDescription',
+                        'cancer_types.id as cancerId',
+                        'cancer_types.name as cancerName',
+                        'cancer_types.description as cancerDescription')
+                ->where('volunteerId','=',$result->user->id)
+                ->get();
+    $finalResult = array();
+    foreach ($events as $event) {
+        $object['eventId'] = $event['id'];
+        $object['eventName'] = $event['eventName'];
+        $object['eventType'] = $event['eventType'];
+        $object['startingDate'] = $event['startingDate'];
+        $object['endingDate'] = $event['endingDate'];
+
+        if (isset($event['formId'])){
+            $object['form'] = array('formId'=> $event['formId'],
+                                  'formName'=> $event['formName'],
+                          'formDescription' => $event['formDescription']);
+        }else {
+            $object['form'] = array();
+        }
+        $object['cancerType'] = array('cancerId'=>$event['cancerId'],
+                                      'cancerName'=> $event['cancerName'],
+                                      'description'=> $event['cancerDescription']);
+        $finalResult[] = $object;
+    }
+    return json_encode(['results' => $finalResult]);
+   }
+
+   public function fetchPatients($eventId) {
+      $result = json_decode($this->getAuthenticatedUser());
+      $patients = DB::table('screenings')
+                  ->join('patients','patients.id','=','screenings.patientId')
+                  ->select('patients.*','screenings.id as screeningId')
+                  ->where('eventId','=',$eventId)
+                  ->where('volunteerId','=',$result->user->id)
+                  ->get();
+       $finalResult = array();
+       foreach ($patients as $patient) {
+       
+         $object['id'] = $patient['id'];
+         $object['name'] = $patient['name'];
+         $object['dob'] = $patient['dob'];
+         $object['gender'] = $patient['gender'];
+          $object['maritalStatus'] = $patient['maritalStatus'];
+          $object['email'] = $patient['email'];
+          $object['annualIncome'] = $patient['annualIncome'];
+          $object['occupation'] = $patient['occupation'];
+          $object['education'] = $patient['education'];
+          $object['religion'] = $patient['religion'];
+
+          $object['aliveChildrenCount'] = $patient['aliveChildrenCount'];
+          $object['deceasedChildrenCount'] = $patient['deceasedChildrenCount'];
+          $object['voterId'] = $patient['voterId'];
+          $object['adharId'] = $patient['adharId'];
+          $finalResult[] = array('screeningId'=>$patient['screeningId'],'patient' => $object);
+       }
+     return json_encode(['results'=>$finalResult]);
+   }
+
     /**
      * Display the specified resource.
      *

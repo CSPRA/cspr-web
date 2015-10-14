@@ -87,8 +87,8 @@ public function __construct()
             return response()->json(['token_absent'], $e->getStatusCode());
 
         }
-
-        return response()->json(compact('user'));
+        return json_encode(['user' => $user]);
+        // return response()->json(compact('user'));
     }
 
     private function isEmailPresent($email) {
@@ -117,6 +117,7 @@ public function __construct()
         $newUser['name'] = $request->input('username');
         $newUser['password'] = Hash::make($request->input('password'));
         $newUser['email'] = $request->input('email');
+        echo $request->input('username');
         try {
              $roleId = DB::table('roles')->where('name', $request->input('role'))->pluck('id');
         }catch (\Exception $e) {

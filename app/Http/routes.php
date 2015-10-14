@@ -57,14 +57,6 @@ Route::post('staff/login',
   ['as' => 'login','uses' => 'StaffController@login']
 );
 
-Route::post('register_patient',
-  ['middleware' => ['jwt.auth','roles'],
-   'as' => 'register_patient', 
-   'uses' => 'PatientController@create',
-   'roles' => ['admin', 'staff', 'volunteer']
-   ]
-);
-
 Route::post('create_cancer_type',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_cancer_type',
@@ -143,4 +135,70 @@ Route::post('add_query/{formId}',
 
 Route::get('queries/{formId?}',
   ['as' => 'queries', 'uses'=>'DiagnosisController@fetchQueryForDetectionForm']
+);
+
+Route::post('create_event',
+ ['middleware' => ['jwt.auth','roles'],
+  'as' =>'create_event',
+  'uses' =>'DiagnosisController@createEvent',
+  'roles' => ['admin','staff']
+  ]);
+
+Route::get('events',
+   ['as' => 'events', 'uses'=>'DiagnosisController@fetchEvents']
+  );
+
+Route::post('assign_volunteers/{eventId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'assign_volunteers',
+  'uses' =>'DiagnosisController@assignVolunteers',
+  'roles' => ['admin','staff']]
+  );
+
+Route::get('eventVolunteers/{eventId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'eventVolunteers',
+  'uses' =>'DiagnosisController@fetchEventVolunteers',
+  'roles' => ['admin','staff']]
+  );
+
+Route::get('volunteer/myScreeningAssignments',[
+  'middleware' => ['jwt.auth','roles'],
+  'as' =>'myScreeningAssignments',
+  'uses' =>'VolunteerController@fetchVolunteerEvents',
+  'roles' => ['volunteer']
+  ]);
+
+/******************************/
+
+Route::post('volunteer/registerPatient',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'registerPatient', 
+   'uses' => 'PatientController@create',
+   'roles' => ['volunteer']
+   ]
+);
+
+Route::get('volunteer/fetchPatients/{eventId}',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'fetchPatients', 
+   'uses' => 'VolunteerController@fetchPatients',
+   'roles' => ['volunteer']
+  ]
+);
+
+Route::post('registerPatient',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'registerPatient', 
+   'uses' => 'PatientController@create',
+   'roles' => ['admin', 'staff']
+   ]
+);
+
+Route::post('saveDiagnosisImage/{patientId}',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'saveDiagnosisImage', 
+   'uses' => 'PatientController@saveImage',
+   'roles' => ['volunteer','admin','staff']
+  ]
 );

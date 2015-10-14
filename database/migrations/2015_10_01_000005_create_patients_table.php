@@ -19,19 +19,21 @@ class CreatePatientsTable extends Migration
 			$table->enum('gender', array('male', 'female'));
             $table->enum('maritalStatus',array('single','married','divorced','widowed'));
 			$table->string('address');
-			$table->string('homePhoneNumber');
+			$table->string('homePhoneNumber')->nullable();
             $table->string('mobileNumber');
-            $table->string('email');
+            $table->string('email')->nullable();
 
             $table->integer('annualIncome');
             $table->string('occupation');
-            $table->string('education');
+            $table->enum('education',array('University','College','Professional School','Higher Secondary','Secondary School','Primary School','NA'));
             $table->string('religion');
             $table->integer('aliveChildrenCount');
             $table->integer('deceasedChildrenCount');
 
-            $table->integer('registeredBy')->unsigned();
-            $table->foreign('registeredBy')->references('userId')->on('volunteers')->onDelete('cascade');
+            $table->string('voterId')->nullable();
+            $table->string('adharId')->nullable();
+            $table->unique( array('voterId','adharId'));
+
             $table->timestamps();
         });
    }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\User;
+use App\Volunteer;
 
 class UserTableSeeder extends Seeder
 {
@@ -28,6 +29,13 @@ class UserTableSeeder extends Seeder
             'roleId'        => 2
         ]);
 
+        User::create([
+            'id'            => 2,
+            'name'          => 'volunteer1',
+            'email'         => 'volunteer1@gmail.com',
+            'password'      => '$2y$10$zJxQkCB6UNr9zzLIgve71ekLMEcOWue/lKuyCtunV559qN2NDV1ra',
+            'roleId'        => 5
+        ]);
         DB::statement('SET FOREIGN_KEY_CHECKS = 1'); // enable foreign key constraints
     }
 }

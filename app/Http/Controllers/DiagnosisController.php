@@ -17,6 +17,8 @@ use App\DetectionForm;
 use App\Query;
 use App\Response;
 use App\Screening;
+use App\Event;
+use App\Assignment;
 
 use DB;
 
@@ -145,35 +147,67 @@ class DiagnosisController extends Controller
         
         return array('questions'=>$array);
     }
- public function organisePerSection($list) {
-        $sections = array_unique((array_column($list, 'sectionId')));
-        $finalResult = array();
-        foreach ($sections as $key => $value) {
-            $section['sectionId'] = $value;
-            $children = $this->getChildrenForParent($list,null,$value);
-            $section['questions'] = $children['questions'];
-            $finalResult[] = $section;
-        }
 
-    }
-    public function getChildrenForParent($tree,$parentId,$sectionId) {
-       static  $finalResult = array();
-        $questions = array_filter($tree, function($v) use($parentId,$sectionId){
-            return $v['parentId'] == $parentId && $v['sectionId'] == $sectionId; 
-        });
-        $array = array();
-        foreach ($questions as $row) {
-            //Process questions
-            $finalObject['id'] = $row['questionId'];
-            // if ($row['hasChildren'] == true) {
-            $children= $this->getChildrenForParent($tree,$row['questionId'],$sectionId);
-            $finalObject['questions'] = $children['questions'];
-            $array[] = $finalObject;
+   public function createEvent(Request $request) {
+     $event = new Event;
+     $event->name = $request->input('name');
+     $event->cancerId = $request->input('cancerId');
+     $event->startDate = $request->input('startDate');
+     $event->endDate = $request->input('endDate');
+     $event->formId = $request->input('formId');
+
+    try {
+        $event->save();
+
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not create event'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
         }
-         
-        // var_dump($res);
-        return array('questions'=>$array);
-    }
+        return json_encode(['result' =>$event]);
+   }
+
+   public function fetchEvents(Request $request) {
+        $events = DB::table('events')
+            ->join('cancer_types', 'cancer_types.id', '=', 'events.cancerId')
+            ->join('detection_form', 'detection_form.id', '=', 'events.formId')
+            ->select('events.*', 'cancer_types.name as cancerName', 'detection_form.name')
+            ->get();
+            return json_encode(['result' => $events]);
+   }
+
+   public function assignVolunteers($eventId,Request $request) {
+        $volunteers = $request->input('volunteerIds');
+        $data = array();
+        foreach ($volunteers as $volunteerId) {
+            $data[] = array('volunteerId'=>$volunteerId,'eventId'=>$eventId);
+        }
+        try {
+            Assignment::insert($data);
+
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not assign volunteers'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }
+        return json_encode(['result' =>$data]);
+   }
+
+   public function fetchEventVolunteers($eventId,Request $request) {
+        $volunteers = DB::table('screening_assignment')
+            ->join('volunteers', 'volunteers.userId', '=', 'screening_assignment.volunteerId')
+            ->join('users', 'users.id', '=', 'volunteers.userId')
+            ->select('users.id','users.name', 'users.email','volunteers.firstName','volunteers.lastname',
+                'volunteers.contactNumber')
+            ->get();
+            return json_encode(['result' => $volunteers]);
+   }
 
     /**
      * Show the form for creating a new resource.

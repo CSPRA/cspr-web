@@ -13,7 +13,7 @@ class CreateVolunteersTable extends Migration
     public function up()
     {
       	 Schema::create('volunteers', function (Blueprint $table) {
-                $table->integer('userId')->unsigned()->index();
+                $table->integer('userId')->unsigned()->index()->unique();
                 $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
 				$table->string('firstname');
 				$table->string('lastname');
