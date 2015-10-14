@@ -88,20 +88,17 @@ class DiagnosisController extends Controller
             ->select('query.*', 'sections.name as sectionName', 'questions.title')
             ->where('formId','=',$formId)
             ->get();
-            // var_dump($questions);
         $optionGroups = array_filter(array_unique((array_column($questions, 'optionGroupId'))),'strlen');
         $options = DB::table('options')
-                    ->select('id','name','groupId')
-                    ->whereIn('groupId', $optionGroups)->orderBy('id', 'groupId')->get();
-
-                    // var_dump($options);
+                    ->select('id','name','groupId','order')
+                    ->whereIn('groupId', $optionGroups)->orderBy('order','groupId')->get();
             return  $this->organize($questions,$options);
-
     }
 
     public function organize($questions,$options) {
         $sections = array_unique((array_column($questions, 'sectionId')));
         $finalResult = array();
+        sort($sections);
         foreach ($sections as $key => $value) {
             $section['sectionId'] = $value;
             $questionsForSection = array_filter($questions, function($v) use($value){
@@ -112,7 +109,7 @@ class DiagnosisController extends Controller
             $finalResult[] = $section;
         }
 
-        return array('section'=>$finalResult);
+        return array('sections'=>$finalResult);
     }
 
     public function getNestedQuestionForParent($tree,$options,$parentId) {
@@ -122,6 +119,7 @@ class DiagnosisController extends Controller
         });
         $array = array();
         foreach ($questions as $row) {
+            $finalObject['queryId'] = $row['id'];
             $finalObject['questionId'] = $row['questionId'];
             $finalObject['title'] = $row['title'];
             $finalObject['type'] = $row['questionType'];
@@ -129,12 +127,15 @@ class DiagnosisController extends Controller
             $finalObject['units'] = $row['units'];
             $currentGroupId = $row['optionGroupId'];
             $selectedOptions = array();
-        
+            
+            asort($options);
+
             foreach ($options as $key => $value) {
                 if ($value['groupId'] == $currentGroupId) {
                     $selectedOptions[]= $value;
                 }
             }
+
             $finalObject['options'] = $selectedOptions;
             $children= $this->getNestedQuestionForParent($tree,$options,$row['id']);
             $finalObject['questions'] = $children['questions'];
