@@ -195,10 +195,22 @@ Route::post('registerPatient',
    ]
 );
 
-Route::post('saveDiagnosisImage/{patientId}',
+Route::post('saveDiagnosisImage/{screeningId}',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'saveDiagnosisImage', 
    'uses' => 'PatientController@saveImage',
    'roles' => ['volunteer','admin','staff']
   ]
 );
+
+Route::get('diagnosisImage/{screeningId}/{imageName}', 
+  ['as' => 'diagnosisImage',
+   'uses'=> 'PatientController@fetchImage'
+  ]
+  );
+
+Route::get('diagnosisImages/{screeningId}',
+  ['as' => 'diagnosisImages',
+   'uses' => 'PatientController@fetchImagesForScreening'
+  ]
+  );
