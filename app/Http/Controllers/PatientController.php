@@ -15,6 +15,7 @@ use DB;
 use Input;
 use Storage;
 use File;
+use App\DiagnosisImage;
 
 class PatientController extends Controller
 {
@@ -87,32 +88,6 @@ class PatientController extends Controller
         return $patient;
     }
 
-    public function saveImage($screeningId,Request $request) {
-
-        // var_dump($request->getContent());
-       $result =  Storage::disk('public')->put($screeningId.'/abc.jpg',  $request->getContent());
-
-  // $content = file_get_contents($request->file('image'));
-        // var_dump($result);
-       $storagePath  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix().$screeningId;
-       $url = asset($screeningId.'/'.'abc.jpg');
-
-       echo $storagePath;
-    }
-
-    public function fetchImage($screeningId,$imageName) {
-        $storagePath  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix().$screeningId;
-
-        $path = $storagePath . '/' . $imageName;
-
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = Response($file, 200);
-        $response->header("Content-Type", $type);
-
-     return $response;
-    }
 
     // public function 
 

@@ -209,6 +209,51 @@ class DiagnosisController extends Controller
             return json_encode(['result' => $volunteers]);
    }
 
+    public function saveImage($screeningId,Request $request) {
+       $imageCount = DB::table('diagnosis_images')->where('screeningId','=',$screeningId)->count();
+       $imageCount ++;
+       $result =  Storage::disk('public')->put($screeningId.'/image_'.$imageCount.'.jpg',  $request->getContent());
+       $storagePath  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix().$screeningId;
+
+       $diagnosisImage = new DiagnosisImage;
+       $diagnosisImage['screeningId'] = $screeningId;
+       $diagnosisImage['description'] = $request->input('description');
+       $diagnosisImage['imageName'] = 'image_'.$imageCount.'.jpg';
+       
+       $diagnosisImage->save();
+       echo $storagePath;
+    }
+
+    public function fetchImage($screeningId,$imageName) {
+        $storagePath  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix().$screeningId;
+
+        $path = $storagePath . '/' . $imageName;
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response($file, 200);
+        $response->header("Content-Type", $type);
+
+     return $response;
+    }
+
+    public function fetchImagesForScreening($screeningId) {
+      $storagePath  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix().$screeningId;
+
+        $result = DB::table('diagnosis_images')->where('screeningId','=',$screeningId)->get();
+        $finalResult = array();
+        foreach ($result as $imageInfo) {
+            $info['description'] = $imageInfo['description'];
+            $info['imageURL'] = (url().'/diagnosisImage/'.$screeningId.'/'.$imageInfo['imageName']);
+            $finalResult[] = $info;
+        }
+        return str_replace('\/','/',json_encode($finalResult));
+    }
+
+    public function saveDiagnosisResponse(Request $request) {
+        
+    }
     /**
      * Show the form for creating a new resource.
      *

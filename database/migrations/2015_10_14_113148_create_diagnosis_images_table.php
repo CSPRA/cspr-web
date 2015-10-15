@@ -17,10 +17,11 @@ class CreateDiagnosisImagesTable extends Migration
             $table->integer('screeningId')->unsigned()->index();
             $table->foreign('screeningId')->references('id')->on('screenings')->onDelete('cascade');
 
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('imageName');
 
             $table->unique(array('screeningId','imageName')); 
+            $table->timestamps();
 
         });
     }
@@ -33,5 +34,6 @@ class CreateDiagnosisImagesTable extends Migration
     public function down()
     {
         //
+        Schema::drop('diagnosis_images');
     }
 }
