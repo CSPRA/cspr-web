@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
 {
-    protected $table = 'screening_assignment';
+    protected $table = 'event_assignments';
     protected $fillable = [
     	'eventId',
-    	'volunteerId'
+    	'volunteerId',
+    	'startingDate',
+    	'endingDate'
     ];
 }

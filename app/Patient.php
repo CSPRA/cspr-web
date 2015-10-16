@@ -19,9 +19,10 @@ class Patient extends Model
     	'occupation',
     	'education',
     	'religion',
+        'voterId',
+        'adharId',
 
 		'aliveChildrenCount',
-		'deceasedChildrenCount',
-		'registeredBy'
+		'deceasedChildrenCount'
     ];
 }

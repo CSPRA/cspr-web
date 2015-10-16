@@ -106,6 +106,7 @@ class DiagnosisController extends Controller
             $questionsForSection = array_filter($questions, function($v) use($value){
              return $v['sectionId'] == $value; 
             });
+            $section['sectionName'] = reset($questionsForSection)['sectionName'];
             $children = $this->getNestedQuestionForParent($questionsForSection,$options,null);
             $section['questions'] = $children['questions'];
             $finalResult[] = $section;
@@ -139,13 +140,168 @@ class DiagnosisController extends Controller
             }
 
             $finalObject['options'] = $selectedOptions;
-            $children= $this->getNestedQuestionForParent($tree,$options,$row['id']);
+            $children = $this->getNestedQuestionForParent($tree,$options,$row['id']);
             $finalObject['questions'] = $children['questions'];
             $array[] = $finalObject;
         }
          
         
         return array('questions'=>$array);
+    }
+
+    public function saveDiagnosisResponses(Request $request) {
+        try {
+            $screening = new Screening();
+            $screening['eventId'] = $request->input('eventId');
+            $screening['patientId'] = $request->input('patientId');
+            $screening['volunteerId'] = $request->input('volunteerId');
+
+            $screening->save();
+            
+        }catch(\Exception $e) {
+            return response()->json([
+            'error' => [
+                'message' => 'Could not save screening'.$e->getMessage(),
+                'code' => 101,
+                ]
+             ]); 
+        }
+        $responses = $request->input('responses');
+        $responseToSave = array();
+        foreach ($responses as $inputResponse) {
+            $response['screeningId'] = $screening['id'];
+            $response['queryId'] = $inputResponse['queryId'];
+            if (array_key_exists('textAnswer',$inputResponse)) {
+                $response['textAnswer'] = $inputResponse['textAnswer'];
+            }
+            if (array_key_exists('numberAnswer',$inputResponse)) {
+                $response['numberAnswer'] = $inputResponse['numberAnswer'];
+            }
+            if (array_key_exists('boolAnswer', $inputResponse)) {
+                $response['boolAnswer'] = $inputResponse['boolAnswer'];
+            }
+            if (array_key_exists('optionGroupId', $inputResponse)) {
+                $response['optionGroupId'] = $inputResponse['optionGroupId'];
+            }
+            if (array_key_exists('optionId', $inputResponse)) {
+                $response['optionId'] = $inputResponse['optionId'];
+            }
+            $responseToSave[] = $response;
+        }
+        try {
+            DB::table('response')->insert($responseToSave);
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not save responses'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }
+        return json_encode(['result' =>'success']);
+    }
+
+
+    public function fetchDiagnosisResponses($screeningId) {
+        $responses = DB::table('response')
+                  ->join('query','query.id', '=', 'response.queryId')
+                  ->select('query.*','response.*')
+                  ->get();
+        if (count($responses) > 0) { 
+            $formId = $responses[0]['formId'];
+        }
+
+        $queries = $this->fetchQueryForDetectionForm($formId);
+
+        $finalResult = array();
+        $sections = $queries['sections'];
+        foreach ($sections as $section) {
+            $finalSection['sectionId'] = $section['sectionId'];
+            $finalSection['sectionName'] = $section['sectionName'];
+            $children = $this->getNestedResponseForParent($section['questions'],null,$responses);
+            $finalSection['responses'] = $children['responses'];
+            $finalResult['sections'][] = $finalSection;
+        }
+        return $finalResult;
+  
+    }
+
+    public function getNestedResponseForParent($questions,$parentId,$responses) {
+        if ($questions == null) {
+            return array('responses'=>array());
+        }
+         foreach ($questions as $question) {
+                $responseObject['queryId'] = $question['queryId'];
+                $responseObject['questionId'] = $question['questionId'];
+                $responseObject['title'] = $question['title']; 
+                $responseObject['type'] = $question['type'];
+                $responseObject['order'] = $question['order'];
+                $responseObject['units'] = $question['units'];
+                $responseObject['options'] = $question['options'];
+                $queryId =  $question['queryId'];
+                $result = array_filter($responses, function($v) use($queryId){
+                     return $v['queryId'] == $queryId; 
+                    });
+
+                $answerObject = array();
+                switch ($question['type']) {
+                    case 'text':
+                        $answer = reset($result);
+                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['textAnswer'] = $answer['textAnswer'];
+                    break;
+
+                    case 'number':
+                        $answer = reset($result);
+                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['numberAnswer'] = $answer['numberAnswer'];
+                    break;
+
+                    case 'boolean':
+                        $answer = reset($result);
+                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['boolAnswer'] = $answer['boolAnswer'];
+                    break;
+
+                    case 'single choice':
+                        $answer = reset($result);
+                        $answerObject['answerId'] = $answer['id'];
+                        $optionId = $answer['optionId'];
+                        $optionGroupId = $answer['optionGroupId'];
+                        $options = array_filter($question['options'], function($v) use($optionId,$optionGroupId){
+                            return $v['id'] == $optionId && $v['groupId'] == $optionGroupId; 
+                            });
+                        $answerObject['options'] =  reset($options);                        
+
+                        break;
+
+                    case 'multiple choice':
+                        foreach ($result as $answer) {
+                            $answerObject['answerId'] = $answer['id'];
+                            $optionId = $answer['optionId'];
+                            $optionGroupId = $answer['optionGroupId'];
+                            $options = array_filter($question['options'], function($v) use($optionId,$optionGroupId){
+                               return $v['id'] == $optionId && $v['groupId'] == $optionGroupId; 
+                            });
+                            if ($options != null) {
+                                $answerObject['options'][] = reset($options);
+                            }
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+                 $responseObject['answer'] = $answerObject;
+                 $dependentQuestions  = $question['questions'];
+
+                 $children = $this->getNestedResponseForParent($question['questions'],$queryId,$responses);
+                 $responseObject['responses'] = $children['responses'];
+                $finalResult[] = $responseObject;
+            }
+        return array('responses'=>$finalResult);
+
     }
 
    public function createEvent(Request $request) {
@@ -251,9 +407,6 @@ class DiagnosisController extends Controller
         return str_replace('\/','/',json_encode($finalResult));
     }
 
-    public function saveDiagnosisResponse(Request $request) {
-        
-    }
     /**
      * Show the form for creating a new resource.
      *

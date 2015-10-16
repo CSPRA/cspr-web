@@ -50,14 +50,14 @@ class OptionTableSeeder extends Seeder
         *   Options for group: Food Preferences
         */
         Option::create([
-            'id'            => 1,
+            'id'            => 4,
             'name'          => 'Veg',
             'groupId'       => 2,
             'order'         => 1,
         ]);
 
         Option::create([
-            'id'            => 2,
+            'id'            => 5,
             'name'          => 'Non-Veg',
             'groupId'       => 2,
             'order'         => 2,
@@ -66,31 +66,31 @@ class OptionTableSeeder extends Seeder
 		*  Options for group: Non-Veg Foods
         */
         Option::create([
-            'id'            => 4,
+            'id'            => 6,
             'name'          => 'Eggs',
             'groupId'       => 3,
             'order'			=> 1,        
         ]);
         Option::create([
-            'id'            => 5,
+            'id'            => 7,
             'name'          => 'Fresh Fish',
             'groupId'       => 3,
             'order'			=> 2,
         ]);
     	Option::create([
-            'id'            => 6,
+            'id'            => 8,
             'name'          => 'Dry Fish',
             'groupId'       => 3,
             'order'			=> 3,
         ]);
         Option::create([
-            'id'            => 7,
+            'id'            => 9,
             'name'          => 'Meat',
             'groupId'       => 3,
             'order'			=> 4,
 		]);
         Option::create([
-            'id'            => 8,
+            'id'            => 10,
             'name'          => 'Beef',
             'groupId'       => 3,
             'order'			=> 5,

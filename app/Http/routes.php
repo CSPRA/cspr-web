@@ -179,6 +179,14 @@ Route::post('volunteer/registerPatient',
    ]
 );
 
+Route::post('volunteer/screenPatient', 
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'registerPatient', 
+   'uses' => 'PatientController@create',
+   'roles' => ['volunteer']
+   ]
+);
+
 Route::get('volunteer/fetchPatients/{eventId}',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'fetchPatients', 
@@ -215,3 +223,26 @@ Route::get('diagnosisImages/{screeningId}',
   ]
 );
 
+Route::post('diagnosisResponses',
+   ['middleware' => ['jwt.auth','roles'],
+   'as' => 'saveDiagnosisResponses', 
+   'uses' => 'DiagnosisController@saveDiagnosisResponses',
+   'roles' => ['admin', 'staff','volunteer']
+   ]
+  );
+
+Route::put('diagnosisResponses/{screeningId}',
+   ['middleware' => ['jwt.auth','roles'],
+   'as' => 'saveDiagnosisResponses', 
+   'uses' => 'DiagnosisController@saveDiagnosisResponses',
+   'roles' => ['admin', 'staff','volunteer']
+   ]
+  );
+
+Route::get('diagnosisResponses/{screeningId}',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'fetchDiagnosisResponse', 
+   'uses' => 'DiagnosisController@fetchDiagnosisResponses',
+   'roles' => ['admin', 'staff','volunteer','doctor']
+   ]
+  );

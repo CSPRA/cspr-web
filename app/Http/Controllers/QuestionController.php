@@ -90,11 +90,14 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
+
         return json_encode(['question' =>$result]);
     }
 
     public function getQuestions($sectionId=null,$keyword=null) {
         $result = Question::like('title', $keyword)->where('sectionId',$sectionId)->get();
+        // return str_replace('\/','/',json_encode(['questions' =>$result]));
+
         return json_encode(['questions' =>$result]);
     }
 

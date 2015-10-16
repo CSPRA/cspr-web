@@ -12,7 +12,6 @@ class CreateResponseTable extends Migration
      */
     public function up()
     {
-        //
 
         Schema::create('response', function (Blueprint $table) {
             $table->increments('id');
@@ -20,18 +19,20 @@ class CreateResponseTable extends Migration
             $table->integer('screeningId')->unsigned()->index();
             $table->foreign('screeningId')->references('id')->on('screenings')->onDelete('cascade');
 
-            $table->integer('formId')->unsigned()->nullable();
-            $table->foreign('formId')->references('id')->on('detection_form')->onDelete('set null');
-
             $table->integer('queryId')->unsigned();
             $table->foreign('queryId')->references('id')->on('query')->onDelete('cascade');
 
             $table->text('textAnswer')->nullable();
             $table->decimal('numberAnswer')->nullable();
             $table->boolean('boolAnswer')->nullable();
-            $table->integer('answerId')->unsigned()->nullable();
-            $table->foreign('answerId')->references('id')->on('options')->onDelete('set null');
             
+            $table->integer('optionGroupId')->unsigned()->nullable();
+            $table->foreign('optionGroupId')->references('id')->on('option_groups')->onDelete('set null');
+
+            $table->integer('optionId')->unsigned()->nullable();
+            $table->foreign('optionId')->references('id')->on('options')->onDelete('set null');
+            
+            $table->unique(array('screeningId','queryId','optionGroupId','optionId'));
             $table->timestamps();
         });
     }
