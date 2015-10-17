@@ -57,7 +57,7 @@ Route::post('staff/login',
   ['as' => 'login','uses' => 'StaffController@login']
 );
 
-Route::post('create_cancer_type',
+Route::post('createCancerType',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_cancer_type',
   'uses' =>'QuestionController@createCancerType',
@@ -69,7 +69,7 @@ Route::get('cancerTypes',
   ['as' => 'cancerTypes', 'uses'=>'QuestionController@getCancerTypes']
   );
 
-Route::post('create_section',
+Route::post('createSection',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_section',
   'uses' =>'QuestionController@createSection',
@@ -81,7 +81,7 @@ Route::get('sections',
   ['as' => 'sections', 'uses'=>'QuestionController@getSections']
   );
 
-Route::post('add_question',
+Route::post('addQuestion',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'add_question',
   'uses' =>'QuestionController@addQuestion',
@@ -93,7 +93,7 @@ Route::get('questions/{sectionId?}/{keywords?}',
   ['as' => 'questions', 'uses'=>'QuestionController@getQuestions']
 );
 
-Route::post('add_optionGroup',
+Route::post('addOptionGroup',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'add_optionGroup',
   'uses' =>'QuestionController@addOptionGroup',
@@ -105,7 +105,7 @@ Route::get('optionGroups/{sectionId?}',
   ['as' => 'optionGroups', 'uses'=>'QuestionController@getOptionGroups']
 );
 
-Route::post('add_options/{groupId}',
+Route::post('addOptions/{groupId}',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'add_options',
   'uses' =>'QuestionController@addOptions',
@@ -117,7 +117,7 @@ Route::get('options/{groupId?}',
   ['as' => 'options', 'uses'=>'QuestionController@getOptions']
 );
 
-Route::post('create_detection_form',
+Route::post('createDetectionForm',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_detection_form',
   'uses' =>'DiagnosisController@createDetectionForm',
@@ -125,7 +125,7 @@ Route::post('create_detection_form',
   ]
 );
 
-Route::post('add_query/{formId}',
+Route::post('addQuery/{formId}',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'add_query',
   'uses' =>'DiagnosisController@addQueryToDetectionForm',
@@ -137,7 +137,7 @@ Route::get('queries/{formId?}',
   ['as' => 'queries', 'uses'=>'DiagnosisController@fetchQueryForDetectionForm']
 );
 
-Route::post('create_event',
+Route::post('createEvent',
  ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_event',
   'uses' =>'DiagnosisController@createEvent',
@@ -148,7 +148,7 @@ Route::get('events',
    ['as' => 'events', 'uses'=>'DiagnosisController@fetchEvents']
   );
 
-Route::post('assign_volunteers/{eventId}',
+Route::post('assignVolunteers/{eventId}',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'assign_volunteers',
   'uses' =>'DiagnosisController@assignVolunteers',
@@ -179,14 +179,6 @@ Route::post('volunteer/registerPatient',
    ]
 );
 
-Route::post('volunteer/screenPatient', 
-  ['middleware' => ['jwt.auth','roles'],
-   'as' => 'registerPatient', 
-   'uses' => 'PatientController@create',
-   'roles' => ['volunteer']
-   ]
-);
-
 Route::get('volunteer/fetchPatients/{eventId}',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'fetchPatients', 
@@ -203,7 +195,7 @@ Route::post('registerPatient',
    ]
 );
 
-Route::post('saveDiagnosisImage/{screeningId}',
+Route::post('diagnosisImage/{screeningId}',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'saveDiagnosisImage', 
    'uses' => 'DiagnosisController@saveImage',
