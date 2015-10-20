@@ -48,45 +48,47 @@ class VolunteerController extends TokenAuthController
         
         $request['role'] = 'volunteer';
         $result = $this->register($request);
-        $value = json_decode($result,true);
+        $value = $result->getData();
 
-        if (array_key_exists('error', $value)) {
+        if (property_exists($value,'error')) {
             return $result;
         }else {
             $volunteer = new Volunteer;
-            $volunteer['userId'] = $value['data']['id'];
+            $volunteer['userId'] = $value->result->id;
             $volunteer['contactNumber'] = $request->input('contactNumber');
             $volunteer['firstname'] = $request->input('firstname');
             $volunteer['lastname'] = $request->input('lastname');
             try {
-                $finalResult = $volunteer->save();
+                $volunteer->save();
             }catch(\Exception $e) {
             
                 DB::rollback();
             
                 return response()->json([
                 'error' => [
-                    'message' => 'Error while saving.'.$e,
-                    'code' => 101,
+                    'message' => 'Error while saving Volunteer',
+                    'code' => 400,
                     ]
                  ], HttpResponse::HTTP_CONFLICT);
             }
             
             DB::commit();
             
-            return $result;
+            $finalResult['id'] = $value->result->id;
+            $finalResult['token'] = $value->result->token;
+            return  response()->json(['result'=>$finalResult]);
         }
     }
 
     public function login(Request $request) {
         $request['role'] = 'volunteer';
         $result = $this->authenticate($request);
-        $value = json_decode($result,true);
-        if (array_key_exists('error', $value)) {
+        $value = $result->getData();
+        if (property_exists($value, 'error')) {
             return $result;
         }else {
             try {
-                 $volunteer = DB::table('volunteers')->where('userId', $value['user']['id'])->first();
+                 $volunteer = DB::table('volunteers')->where('userId', $value->result->id)->first();
                 }catch(\Exception $e) {
                     return response()->json([
                     'error' => [
@@ -95,21 +97,21 @@ class VolunteerController extends TokenAuthController
                         ]
                      ], HttpResponse::HTTP_CONFLICT);
                  }
-                 $loggedUser['id'] = $value['user']['id'];
-                 $loggedUser['username'] = $value['user']['name'];
-                 $loggedUser['email'] = $value['user']['email'];
-                 $loggedUser['role'] = $value['user']['role'];
+                 $loggedUser['id'] = $value->result->id;
+                 $loggedUser['username'] = $value->result->name;
+                 $loggedUser['email'] = $value->result->email;
+                 $loggedUser['role'] = $value->result->role;
                  $loggedUser['firstname'] = $volunteer['firstname'];
                  $loggedUser['lastname'] = $volunteer['lastname'];
                  $loggedUser['contactNumber'] = $volunteer['contactNumber'];
                  $loggedUser['isVerified'] = $volunteer['isVerified'];
-                 $loggedUser['token'] = $value['user']['token'];
-                 return json_encode(['user'=>$loggedUser]);
+                 $loggedUser['token'] = $value->result->token;
+                 return response()->json(['result'=>$loggedUser]);
         }
    }
 
    public function fetchVolunteerEvents() {
-     $result = json_decode($this->getAuthenticatedUser());
+     $value = $this->getAuthenticatedUser()->getData();
      $events = DB::table('event_assignments')
                 ->join('events', 'events.id', '=', 'event_assignments.eventId')
                 ->join('cancer_types','events.cancerId','=', 'cancer_types.id')
@@ -122,8 +124,9 @@ class VolunteerController extends TokenAuthController
                         'cancer_types.id as cancerId',
                         'cancer_types.name as cancerName',
                         'cancer_types.description as cancerDescription')
-                ->where('volunteerId','=',$result->user->id)
+                ->where('volunteerId','=',$value->user->id)
                 ->get();
+
     $finalResult = array();
     foreach ($events as $event) {
         $object['eventId'] = $event['id'];
@@ -144,16 +147,16 @@ class VolunteerController extends TokenAuthController
                                       'description'=> $event['cancerDescription']);
         $finalResult[] = $object;
     }
-    return json_encode(['results' => $finalResult]);
+    return response()->json(['results'=>$finalResult]);
    }
 
    public function fetchPatients($eventId) {
-      $result = json_decode($this->getAuthenticatedUser());
+      $value = $this->getAuthenticatedUser()->getData();
       $patients = DB::table('screenings')
                   ->join('patients','patients.id','=','screenings.patientId')
                   ->select('patients.*','screenings.id as screeningId')
                   ->where('eventId','=',$eventId)
-                  ->where('volunteerId','=',$result->user->id)
+                  ->where('volunteerId','=',$value->user->id)
                   ->get();
        $finalResult = array();
        foreach ($patients as $patient) {
@@ -175,7 +178,7 @@ class VolunteerController extends TokenAuthController
           $object['adharId'] = $patient['adharId'];
           $finalResult[] = array('screeningId'=>$patient['screeningId'],'patient' => $object);
        }
-     return json_encode(['results'=>$finalResult]);
+    return response()->json(['results'=>$finalResult]);
    }
 
     /**
