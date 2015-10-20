@@ -13,6 +13,7 @@ class CreateDiagnosisImagesTable extends Migration
     public function up()
     {
         Schema::create('diagnosis_images', function (Blueprint $table) {
+            $table->increments('id');
             
             $table->integer('screeningId')->unsigned()->index();
             $table->foreign('screeningId')->references('id')->on('screenings')->onDelete('cascade');

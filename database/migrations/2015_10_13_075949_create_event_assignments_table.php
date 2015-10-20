@@ -14,7 +14,8 @@ class CreateEventAssignmentsTable extends Migration
     {
         
         Schema::create('event_assignments', function (Blueprint $table) {
-            
+            $table->increments('id');
+
             $table->integer('eventId')->unsigned()->index();
             $table->foreign('eventId')->references('id')->on('events')->onDelete('cascade');
 

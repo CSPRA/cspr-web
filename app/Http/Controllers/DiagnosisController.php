@@ -21,6 +21,8 @@ use App\Event;
 use App\Assignment;
 
 use DB;
+use Storage;
+use File;
 
 class DiagnosisController extends Controller
 {
@@ -157,7 +159,7 @@ class DiagnosisController extends Controller
             $screening['volunteerId'] = $request->input('volunteerId');
 
             $screening->save();
-            
+
         }catch(\Exception $e) {
             return response()->json([
             'error' => [
@@ -376,18 +378,37 @@ class DiagnosisController extends Controller
        $diagnosisImage['description'] = $request->input('description');
        $diagnosisImage['imageName'] = 'image_'.$imageCount.'.jpg';
        
-       $diagnosisImage->save();
-       echo $storagePath;
+       try {
+        $diagnosisImage->save();
+
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Could not save image'.$e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }
+        return json_encode(['result' => 'success']);
     }
 
     public function fetchImage($screeningId,$imageName) {
         $storagePath  = Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix().$screeningId;
 
         $path = $storagePath . '/' . $imageName;
-
+ 
+       try {
         $file = File::get($path);
         $type = File::mimeType($path);
 
+        }catch(\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => $e->getMessage(),
+                    'code' => 101,
+                    ]
+                 ]);
+        }        
         $response = Response($file, 200);
         $response->header("Content-Type", $type);
 

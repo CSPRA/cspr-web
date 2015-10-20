@@ -45,25 +45,33 @@ public function __construct()
         
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return json_encode(['error' => 'invalid_credentials', 'code'=>401, 'value'=>$credentials]);
+                return response()->json(
+                    ['error' => array('message' => 'invalid_credentials',
+                                       'code' => 401)]);
             }
         } catch (JWTException $e) {
-            return response()->json(['error' => 'could_not_create_token', 'code'=>500]);
+            return response()->json(
+                    ['error' => array('message' => 'could_not_create_token',
+                                       'code' => 500)]);
         }
 
         try {
             $user = DB::table('users')->where('email', $request['email'])->first();
             $role = DB::table('roles')->where('id', $user['roleId'])->pluck('name');
             if ($role!= $request->input('role')) {
-                return json_encode(['error' => 'User does not exist for this role', 'code'=>401, 'value'=>$request]);
-            }else {
-                $user['token'] = $token;
-                $user['role'] = $role;
-                return json_encode(['user' => $user]);
+                return response()->json(
+                    ['error' => array('message' => 'User does not exist for this role',
+                                       'code' => 401)]);
             }
         }catch (JWTException $e) {
-                return json_encode(['error' => 'could not fetch user', 'code'=>401, 'vlaue'=>$request]);
+            return response()->json(
+                    ['error' => array('message' => 'could not fetch user',
+                                       'code' => 500)]);
         }
+
+        $user['token'] = $token;
+        $user['role'] = $role;
+        return response()->json(['result' => $user]);
     }
 
     public function getAuthenticatedUser()
@@ -87,8 +95,7 @@ public function __construct()
             return response()->json(['token_absent'], $e->getStatusCode());
 
         }
-        return json_encode(['user' => $user]);
-        // return response()->json(compact('user'));
+        return response()->json(['user' => $user]); 
     }
 
     private function isEmailPresent($email) {
@@ -104,49 +111,41 @@ public function __construct()
     }
 
     public function register(Request $request) {
-    if ($this->isEmailPresent($request['email']) || $this->isUsernamePresent($request['username'])) {
-        return json_encode([
-                'error' => [
-                    'message' => 'User is already registered',
-                    'code' => 100
-                ]
-            ], HttpResponse::HTTP_CONFLICT);
 
-    }
-    try {
         $newUser['name'] = $request->input('username');
         $newUser['password'] = Hash::make($request->input('password'));
         $newUser['email'] = $request->input('email');
-        echo $request->input('username');
-        try {
-             $roleId = DB::table('roles')->where('name', $request->input('role'))->pluck('id');
-        }catch (\Exception $e) {
-            return json_encode([
-                'error' => [
-                    'message' => 'Could not save user'.$e->getMessage(),
-                    'code' => 101
-                ]
-            ], HttpResponse::HTTP_CONFLICT);
+        
+        if ($newUser['name'] && $newUser['password'] && $newUser['email']) {
+
+            if ($this->isEmailPresent($request['email']) || $this->isUsernamePresent($request['username'])) {
+             return response()->json(
+                    ['error' => array('message' => 'User is already registered',
+                                       'code' => 400)]);
+            }
+
+            $roleId = DB::table('roles')->where('name', $request->input('role'))->pluck('id');
+
+            if ($roleId == null) {
+              return response()->json(['error'=>array( 'message' => 'Requested Role Not Present',
+                    'code' => 400)]);
+             }
+
+            $newUser['roleId'] = $roleId;
+
+            try {
+                 $user = User::create($newUser);
+            }catch (\Exception $e) {
+                return response()->json(['error'=>array( 'message' => 'Could not save user',
+                                   'code' => 500)]);
+            }
+            return response()->json(['result'=> array( 'id' => (int) $user->id,
+                                                     'token' => JWTAuth::fromUser($user))]); 
+
+        }else {
+             return response()->json(['error' => array('message' => 'Missing Parameters',
+                                                         'code' => 400)]);
         }
-
-        $newUser['roleId'] = $roleId;
-        $user = User::create($newUser);
-     } catch (\Exception $e) {
-        return json_encode([
-                'error' => [
-                    'user' => $newUser,
-                    'message' => 'Could not save user'.$e->getMessage(),
-                    'code' => 101
-                ]
-            ], HttpResponse::HTTP_CONFLICT);
-      }
-        $resource = new Fractal\Resource\Item($user, function(User $user) {
-            return [
-                'id'      => (int) $user->id,
-                'token'   => JWTAuth::fromUser($user)
-            ];
-        });
-
-        return $this->fractal->createData($resource)->toJson();
     }
+
 }

@@ -39,33 +39,24 @@ class HomeController extends TokenAuthController
     
     public function store(Request $request) {
         $request['role'] = 'admin';
-        $result = $this->register($request);
-        return $result;
+        return $this->register($request);
     }
 
     public function login(Request $request)
     {
         $request['role'] = 'admin';
         $result = $this->authenticate($request);
-        $value = json_decode($result,true);
-        if (array_key_exists('error', $value)) {
+        $value = $result->getData();
+        if (property_exists($value,'error')) {
             return $result;
         }else {
-            $loggedUser['id'] = $value['user']['id'];
-            $loggedUser['username'] = $value['user']['name'];
-            $loggedUser['email'] = $value['user']['email'];
-            $loggedUser['role'] = $value['user']['role'];
-            $loggedUser['token'] = $value['user']['token'];
-            return json_encode(['user'=>$loggedUser]);
+            $loggedUser['id'] = $value->result->id;
+            $loggedUser['username'] = $value->result->name;
+            $loggedUser['email'] = $value->result->email;
+            $loggedUser['role'] = $value->result->role;
+            $loggedUser['token'] = $value->result->token;
+            return response()->json(['result'=>$loggedUser]);
         }
-        // $value = json_decode($result,true);
-        // if (array_key_exists('error', $value)) {
-        //      return \Redirect::route('home')
-        //     ->with('errors', array($value['error']));
-        // }else {
-        //     return \Redirect::route('dashboard');
-
-        // }
     }
 
     public function dashboard() {
