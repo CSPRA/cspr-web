@@ -34,45 +34,45 @@ class StaffController extends TokenAuthController
         DB::beginTransaction();
         $request['role'] = 'staff';
         $result = $this->register($request);
-        $value = json_decode($result,true);
+        $value = $result->getData();
 
-        if (array_key_exists('error', $value)) {
+        if (property_exists($value, 'error')) {
             return $result;
         }else {
             $staff = new Staff;
-            $staff['userId'] = $value['data']['id'];
+            $staff['userId'] = $value->result->id;
             $staff['contactNumber'] = $request->input('contactNumber');
             $staff['firstname'] = $request->input('firstname');
             $staff['lastname'] = $request->input('lastname');
             try {
-                $finalResult = $staff->save();
+               $staff->save();
             }catch(\Exception $e) {
             
                 DB::rollback();
             
                 return response()->json([
-                'error' => [
-                    'message' => 'Error while saving.'.$e,
-                    'code' => 101,
-                    ]
-                 ], HttpResponse::HTTP_CONFLICT);
+                   'error' => [
+                    'message' => 'Error while saving Staff',
+                    'code' => 400]]);
             }
             
             DB::commit();
-            
-            return $result;
+            $finalResult['id'] = $value->result->id;
+            $finalResult['token'] = $value->result->token;
+            return  response()->json(['result'=>$finalResult]);
         }
     }
 
     public function login(Request $request) {
         $request['role'] = 'staff';
         $result = $this->authenticate($request);
-        $value = json_decode($result,true);
-        if (array_key_exists('error', $value)) {
+        $value = $result->getData();
+
+        if (property_exists($value, 'error')) {
             return $result;
         }else {
             try {
-                 $staff = DB::table('staffs')->where('userId', $value['user']['id'])->first();
+                 $staff = DB::table('staffs')->where('userId', $value->result->id)->first();
                 }catch(\Exception $e) {
                     return response()->json([
                     'error' => [
@@ -81,17 +81,15 @@ class StaffController extends TokenAuthController
                         ]
                      ], HttpResponse::HTTP_CONFLICT);
                  }
-                 $loggedUser['id'] = $value['user']['id'];
-                 $loggedUser['username'] = $value['user']['name'];
-                 $loggedUser['email'] = $value['user']['email'];
+                 $loggedUser['id'] = $value->result->id;
+                 $loggedUser['username'] = $value->result->name;
+                 $loggedUser['email'] = $value->result->email;
                  $loggedUser['firstname'] = $staff['firstname'];
                  $loggedUser['lastname'] = $staff['lastname'];
                  $loggedUser['contactNumber'] = $staff['contactNumber'];
                  $loggedUser['isVerified'] = $staff['isVerified'];
-                 $loggedUser['token'] = $value['user']['token'];
-
-                return json_encode(['user'=>$loggedUser]);
-
+                 $loggedUser['token'] = $value->result->token;
+                return  response()->json(['result'=>$loggedUser]);
         }
    }
     /**

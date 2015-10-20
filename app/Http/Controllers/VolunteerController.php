@@ -65,11 +65,9 @@ class VolunteerController extends TokenAuthController
                 DB::rollback();
             
                 return response()->json([
-                'error' => [
+                   'error' => [
                     'message' => 'Error while saving Volunteer',
-                    'code' => 400,
-                    ]
-                 ], HttpResponse::HTTP_CONFLICT);
+                    'code' => 400]]);
             }
             
             DB::commit();

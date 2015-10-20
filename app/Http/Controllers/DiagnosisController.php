@@ -19,6 +19,7 @@ use App\Response;
 use App\Screening;
 use App\Event;
 use App\Assignment;
+use App\DiagnosisImage;
 
 use DB;
 use Storage;
@@ -57,7 +58,7 @@ class DiagnosisController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['result' =>$result]);
+        return response()->json(['result' =>$result]);
     }
 
     public function addQueryToDetectionForm($formId,Request $request) {
@@ -81,7 +82,7 @@ class DiagnosisController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['result' =>$query]);
+        response()->json(['result' =>$query]);
     }
 
 
@@ -113,8 +114,7 @@ class DiagnosisController extends Controller
             $section['questions'] = $children['questions'];
             $finalResult[] = $section;
         }
-
-        return array('sections'=>$finalResult);
+        return response()->json(['sections' =>$finalResult]);
     }
 
     public function getNestedQuestionForParent($tree,$options,$parentId) {
@@ -200,7 +200,7 @@ class DiagnosisController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['result' =>'success']);
+        return response()->json(['result' =>'success']);
     }
 
 
@@ -213,18 +213,17 @@ class DiagnosisController extends Controller
             $formId = $responses[0]['formId'];
         }
 
-        $queries = $this->fetchQueryForDetectionForm($formId);
-
+        $queries = $this->fetchQueryForDetectionForm($formId)->getData();
         $finalResult = array();
-        $sections = $queries['sections'];
+        $sections = $queries->sections;
         foreach ($sections as $section) {
-            $finalSection['sectionId'] = $section['sectionId'];
-            $finalSection['sectionName'] = $section['sectionName'];
-            $children = $this->getNestedResponseForParent($section['questions'],null,$responses);
+            $finalSection['sectionId'] = $section->sectionId;
+            $finalSection['sectionName'] = $section->sectionName;
+            $children = $this->getNestedResponseForParent($section->questions,null,$responses);
             $finalSection['responses'] = $children['responses'];
             $finalResult['sections'][] = $finalSection;
         }
-        return $finalResult;
+        return response()->json(['result' =>$finalResult['sections']]);
   
     }
 
@@ -233,20 +232,20 @@ class DiagnosisController extends Controller
             return array('responses'=>array());
         }
          foreach ($questions as $question) {
-                $responseObject['queryId'] = $question['queryId'];
-                $responseObject['questionId'] = $question['questionId'];
-                $responseObject['title'] = $question['title']; 
-                $responseObject['type'] = $question['type'];
-                $responseObject['order'] = $question['order'];
-                $responseObject['units'] = $question['units'];
-                $responseObject['options'] = $question['options'];
-                $queryId =  $question['queryId'];
+                $responseObject['queryId'] = $question->queryId;
+                $responseObject['questionId'] = $question->questionId;
+                $responseObject['title'] = $question->title; 
+                $responseObject['type'] = $question->type;
+                $responseObject['order'] = $question->order;
+                $responseObject['units'] = $question->units;
+                $responseObject['options'] = $question->options;
+                $queryId =  $question->queryId;
                 $result = array_filter($responses, function($v) use($queryId){
                      return $v['queryId'] == $queryId; 
                     });
 
                 $answerObject = array();
-                switch ($question['type']) {
+                switch ($question->type) {
                     case 'text':
                         $answer = reset($result);
                         $answerObject['answerId'] = $answer['id'];
@@ -270,8 +269,8 @@ class DiagnosisController extends Controller
                         $answerObject['answerId'] = $answer['id'];
                         $optionId = $answer['optionId'];
                         $optionGroupId = $answer['optionGroupId'];
-                        $options = array_filter($question['options'], function($v) use($optionId,$optionGroupId){
-                            return $v['id'] == $optionId && $v['groupId'] == $optionGroupId; 
+                        $options = array_filter($question->options, function($v) use($optionId,$optionGroupId){
+                            return $v->id == $optionId && $v->groupId == $optionGroupId; 
                             });
                         $answerObject['options'] =  reset($options);                        
 
@@ -282,8 +281,8 @@ class DiagnosisController extends Controller
                             $answerObject['answerId'] = $answer['id'];
                             $optionId = $answer['optionId'];
                             $optionGroupId = $answer['optionGroupId'];
-                            $options = array_filter($question['options'], function($v) use($optionId,$optionGroupId){
-                               return $v['id'] == $optionId && $v['groupId'] == $optionGroupId; 
+                            $options = array_filter($question->options, function($v) use($optionId,$optionGroupId){
+                               return $v->id == $optionId && $v->groupId == $optionGroupId; 
                             });
                             if ($options != null) {
                                 $answerObject['options'][] = reset($options);
@@ -296,9 +295,9 @@ class DiagnosisController extends Controller
                         break;
                 }
                  $responseObject['answer'] = $answerObject;
-                 $dependentQuestions  = $question['questions'];
+                 $dependentQuestions  = $question->questions;
 
-                 $children = $this->getNestedResponseForParent($question['questions'],$queryId,$responses);
+                 $children = $this->getNestedResponseForParent($question->questions,$queryId,$responses);
                  $responseObject['responses'] = $children['responses'];
                 $finalResult[] = $responseObject;
             }
@@ -325,7 +324,7 @@ class DiagnosisController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['result' =>$event]);
+        return response()->json(['result' =>$event]);
    }
 
    public function fetchEvents(Request $request) {
@@ -334,7 +333,7 @@ class DiagnosisController extends Controller
             ->join('detection_form', 'detection_form.id', '=', 'events.formId')
             ->select('events.*', 'cancer_types.name as cancerName', 'detection_form.name')
             ->get();
-            return json_encode(['result' => $events]);
+            return response()->json(['result' =>$events]);
    }
 
    public function assignVolunteers($eventId,Request $request) {
@@ -354,7 +353,7 @@ class DiagnosisController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['result' =>$data]);
+        return response()->json(['result' =>$data]);
    }
 
    public function fetchEventVolunteers($eventId,Request $request) {
@@ -364,7 +363,7 @@ class DiagnosisController extends Controller
             ->select('users.id','users.name', 'users.email','volunteers.firstName','volunteers.lastname',
                 'volunteers.contactNumber')
             ->get();
-            return json_encode(['result' => $volunteers]);
+            return response()->json(['result' =>$volunteers]);
    }
 
     public function saveImage($screeningId,Request $request) {
@@ -389,7 +388,7 @@ class DiagnosisController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['result' => 'success']);
+        return response()->json(['result' =>'success']);
     }
 
     public function fetchImage($screeningId,$imageName) {
@@ -412,7 +411,7 @@ class DiagnosisController extends Controller
         $response = Response($file, 200);
         $response->header("Content-Type", $type);
 
-     return $response;
+        return $response;
     }
 
     public function fetchImagesForScreening($screeningId) {
@@ -422,10 +421,13 @@ class DiagnosisController extends Controller
         $finalResult = array();
         foreach ($result as $imageInfo) {
             $info['description'] = $imageInfo['description'];
-            $info['imageURL'] = (url().'/diagnosisImage/'.$screeningId.'/'.$imageInfo['imageName']);
+            $info['imageURL'] = url().'/diagnosisImage/'.$screeningId.'/'.$imageInfo['imageName'];
             $finalResult[] = $info;
         }
-        return str_replace('\/','/',json_encode($finalResult));
+        return Response(
+        str_replace('\/','/',json_encode(['result'=>$finalResult])), 200,
+        ['Content-Type' => 'application/json']
+    );
     }
 
     /**

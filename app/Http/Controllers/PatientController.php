@@ -68,7 +68,10 @@ class PatientController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            return $e->getMessage();
+            return response()->json([
+                   'error' => [
+                    'message' => 'Error while saving Patient',
+                    'code' => 400]]);
         }
 
         try {
@@ -81,13 +84,16 @@ class PatientController extends Controller
             
             } catch(\Exception $e) {
                 DB::rollback();
-                return $e->getMessage();
+                return response()->json([
+                   'error' => [
+                    'message' => 'Error while saving Patient',
+                    'code' => 400]]);
             }
 
         DB::commit();
-        return $patient;
-    }
 
+        return $this->show($patient->id);
+    }
 
     // public function 
 
@@ -99,7 +105,8 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+
     }
 
     /**
@@ -110,7 +117,39 @@ class PatientController extends Controller
      */
     public function show($id)
     {
-        //
+        $patient = DB::table('patients')
+                    ->join('patient_history','patient_history.patientId','=','patients.id')
+                    ->join('users','patient_history.registeredBy','=','users.id')
+                    ->join('events','events.id','=','patient_history.eventId')
+                    ->select('patients.*','patient_history.diagnosis_status','users.id as userId','users.name as userName','events.id as eventId','events.name as eventName')
+                    ->where('patients.id','=',$id)
+                    ->first();
+
+         $personalDetails['name'] = $patient['name'];
+         $personalDetails['dob']= $patient['dob'];
+         $personalDetails['gender']= $patient['gender'];
+         $personalDetails['maritalStatus'] = $patient['maritalStatus'];
+         $personalDetails['address'] = $patient['address'];
+         $personalDetails['homePhoneNumber'] = $patient['homePhoneNumber'];
+         $personalDetails['mobileNumber'] = $patient['mobileNumber'];
+         $personalDetails['email'] = $patient['email'];
+         $personalDetails['annualIncome'] = $patient['annualIncome'];
+         $personalDetails['occupation'] = $patient['occupation'];
+         $personalDetails['education'] = $patient['education'];
+         $personalDetails['religion'] = $patient['religion'];
+         $personalDetails['aliveChildrenCount'] = $patient['aliveChildrenCount'];
+         $personalDetails['deceasedChildrenCount'] = $patient['deceasedChildrenCount'];
+         $personalDetails['voterId'] = $patient['voterId'];
+         $personalDetails['adharId'] = $patient['adharId'];
+
+         $eventDetails['id'] = $patient['eventId'];
+         $eventDetails['name'] = $patient['eventName'];
+        $finalResult['id'] = $patient['id'];
+        $finalResult['personalDetails'] = $personalDetails;
+        $finalResult['event'] = $eventDetails;
+        $finalResult['diagnosis_status'] = $patient['diagnosis_status'];
+        $finalResult['registeredBy'] = array('id'=>$patient['userId'],'name'=>$patient['userName']);
+        return  response()->json(['result'=>$finalResult]);
     }
 
     /**

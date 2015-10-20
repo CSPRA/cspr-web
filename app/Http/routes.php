@@ -171,7 +171,7 @@ Route::get('volunteer/myScreeningAssignments',[
 
 /******************************/
 
-Route::post('volunteer/registerPatient',
+Route::post('volunteer/patient',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'registerPatient', 
    'uses' => 'PatientController@create',
@@ -187,11 +187,19 @@ Route::get('volunteer/fetchPatients/{eventId}',
   ]
 );
 
-Route::post('registerPatient',
+Route::post('patient',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'registerPatient', 
    'uses' => 'PatientController@create',
-   'roles' => ['admin', 'staff']
+   'roles' => ['admin', 'staff','volunteer']
+   ]
+);
+
+Route::get('patient/{patientId}',
+['middleware' => ['jwt.auth','roles'],
+   'as' => 'patient', 
+   'uses' => 'PatientController@show',
+   'roles' => ['admin', 'staff','volunteer','doctor']
    ]
 );
 
@@ -216,14 +224,6 @@ Route::get('diagnosisImages/{screeningId}',
 );
 
 Route::post('diagnosisResponses',
-   ['middleware' => ['jwt.auth','roles'],
-   'as' => 'saveDiagnosisResponses', 
-   'uses' => 'DiagnosisController@saveDiagnosisResponses',
-   'roles' => ['admin', 'staff','volunteer']
-   ]
-  );
-
-Route::put('diagnosisResponses/{screeningId}',
    ['middleware' => ['jwt.auth','roles'],
    'as' => 'saveDiagnosisResponses', 
    'uses' => 'DiagnosisController@saveDiagnosisResponses',

@@ -34,63 +34,64 @@ class DoctorController extends TokenAuthController
         $request['role'] = 'doctor';
 
         $result = $this->register($request);
-        $value = json_decode($result,true);
+        $value = $result->getData();
 
-        if (array_key_exists('error', $value)) {
+        if (property_exists($value, 'error')) {
             return $result;
         }else {
             $doctor = new Doctor;
-            $doctor['userId'] = $value['data']['id'];
+            $doctor['userId'] = $value->result->id;
             $doctor['contactNumber'] = $request->input('contactNumber');
             $doctor['firstname'] = $request->input('firstname');
             $doctor['lastname'] = $request->input('lastname');
             try {
-                $finalResult = $doctor->save();
+                $doctor->save();
             }catch(\Exception $e) {
             
                 DB::rollback();
-            
                 return response()->json([
-                'error' => [
-                    'message' => $e,
-                    'code' => 101,
-                    'inputValue' => $doctor
-                    ]
-                 ], HttpResponse::HTTP_CONFLICT);
+                   'error' => [
+                    'message' => 'Error while saving Doctor',
+                    'code' => 400]]);
             }
             
             DB::commit();
-            return $result;
+            $finalResult['id'] = $value->result->id;
+            $finalResult['token'] = $value->result->token;
+            return  response()->json(['result'=>$finalResult]);
         }
     }
 
     public function login(Request $request) {
+        $request['role'] = 'doctor';
+
         $result = $this->authenticate($request);
-        $value = json_decode($result,true);
-        if (array_key_exists('error', $value)) {
+        $value = $result->getData();
+        if (property_exists($value, 'error')) {
             return $result;
         }else {
             try {
-                 $doctor = DB::table('doctors')->where('userId', $value['user']['id'])->first();
+                 $doctor = DB::table('doctors')->where('userId', $value->result->id)->first();
                 }catch(\Exception $e) {
                     return response()->json([
                     'error' => [
-                        'message' => 'User not authorized',
-                        'code' => 102,
+                        'message' => 'User not authorized'.$e,
+                        'code' => 400,
                         ]
                      ], HttpResponse::HTTP_CONFLICT);
                  }
-                 $loggedUser['id'] = $value['user']['id'];
-                 $loggedUser['username'] = $value['user']['name'];
-                 $loggedUser['email'] = $value['user']['email'];
+                 $loggedUser['id'] = $value->result->id;
+                 $loggedUser['username'] = $value->result->name;
+                 $loggedUser['email'] = $value->result->email;
                  $loggedUser['firstname'] = $doctor['firstname'];
                  $loggedUser['lastname'] = $doctor['lastname'];
                  $loggedUser['contactNumber'] = $doctor['contactNumber'];
                  $loggedUser['isVerified'] = $doctor['isVerified'];
-                 $loggedUser['token'] = $value['user']['token'];
+                 $loggedUser['token'] = $value->result->token;
 
                  //fetch specialization
-                 return json_encode($loggedUser);
+                 return  response()->json(['result'=>$loggedUser]);
+
         }
    }
     /**

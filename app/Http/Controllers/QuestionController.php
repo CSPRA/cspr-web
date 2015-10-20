@@ -45,13 +45,12 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
-                    return json_encode(['cancerType' =>$result]);
-
+        return response()->json(['cancerType' =>$result]);
     }
 
     public function getCancerTypes() {
         $result = CancerType::all();
-        return json_encode(['cancerTypes'=>$result]);
+        return response()->json(['cancerTypes' =>$result]);
     }
 
     public function createSection(Request $request) {
@@ -68,12 +67,12 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['section' =>$result]);
+        return response()->json(['section' =>$result]);
     }
 
     public function getSections() {
         $result = Section::all();
-        return json_encode(['sections'=>$result]);
+        return response()->json(['sections' =>$result]);
     }
 
     public function addQuestion(Request $request) {
@@ -90,15 +89,13 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
-
-        return json_encode(['question' =>$result]);
+        return response()->json(['question' =>$result]);
     }
 
     public function getQuestions($sectionId=null,$keyword=null) {
         $result = Question::like('title', $keyword)->where('sectionId',$sectionId)->get();
         // return str_replace('\/','/',json_encode(['questions' =>$result]));
-
-        return json_encode(['questions' =>$result]);
+        return response()->json(['questions' =>$result]);
     }
 
 
@@ -116,13 +113,12 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
-        return json_encode(['optionGroup' =>$result]);
-
+        return response()->json(['optionGroup' =>$result]);
     }
 
     public function getOptionGroups($sectionId=null) {
         $result = DB::table('option_groups')->where('sectionId', $sectionId)->get();
-        return json_encode(['optionGroups' =>$result]);
+        return response()->json(['optionGroups' =>$result]);
     }
 
     public function addOptions($groupId,Request $request) {
@@ -145,12 +141,13 @@ class QuestionController extends Controller
                     ]
                  ]);
             }
-        return json_encode(['result' =>$result]);
+        return response()->json(['result' =>$result]);
+
     }
 
     public function getOptions($groupId) {
         $result = DB::table('options')->where('groupId', $groupId)->get();
-        return json_encode(['options' =>$result]);
+        return response()->json(['options' =>$result]);
     }
 
    
