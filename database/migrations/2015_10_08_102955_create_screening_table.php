@@ -36,6 +36,10 @@ class CreateScreeningTable extends Migration
     public function down()
     {
         //
+        Schema::drop('diagnosis_images');
+        Schema::drop('response');
+        Schema::drop('patient_history');
+
         Schema::drop('screenings');
         //delete corresponding entry in image table
     }

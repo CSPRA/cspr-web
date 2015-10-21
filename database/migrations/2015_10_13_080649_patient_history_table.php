@@ -38,6 +38,7 @@ class PatientHistoryTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('patient_history');
+
     }
 }

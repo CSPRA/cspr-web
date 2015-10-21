@@ -25,8 +25,6 @@ class ScreeningTableSeeder extends Seeder
             'volunteerId'   => 2,  
             'eventId'       => 2
         ]);
-        DB::table('screenings')->insert($screenings);
-
         DB::statement('SET FOREIGN_KEY_CHECKS = 1'); // enable foreign key constraints
     }
 }

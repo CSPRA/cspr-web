@@ -12,8 +12,8 @@ class CreateResponseTable extends Migration
      */
     public function up()
     {
-
-        Schema::create('response', function (Blueprint $table) {
+            Schema::drop('response');
+            Schema::create('response', function (Blueprint $table) {
             $table->increments('id');
             
             $table->integer('screeningId')->unsigned()->index();
