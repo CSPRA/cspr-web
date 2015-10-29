@@ -64,11 +64,27 @@ class UserTableSeeder extends Seeder
             'roleId'        => 4
         ]);
 
+        User::create([
+            'id'            => 6,
+            'name'          => 'volunteer2',
+            'email'         => 'volunteer2@gmail.com',
+            'password'      => '$2y$10$zJxQkCB6UNr9zzLIgve71ekLMEcOWue/lKuyCtunV559qN2NDV1ra',
+            'roleId'        => 5
+        ]);
+
         Volunteer::create([
             'userId'        => 3,
             'firstname'     => 'volunteer1',
             'lastname'      => 'volunteer1',
             'contactNumber' => '9717017651',
+            'isVerified'    => true
+        ]);
+
+        Volunteer::create([
+            'userId'        => 6,
+            'firstname'     => 'volunteer2',
+            'lastname'      => 'volunteer2',
+            'contactNumber' => '9717017650',
             'isVerified'    => true
         ]);
         

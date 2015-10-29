@@ -70,28 +70,7 @@ class DoctorController extends TokenAuthController
         if (property_exists($value, 'error')) {
             return $result;
         }else {
-            try {
-                 $doctor = DB::table('doctors')->where('userId', $value->result->id)->first();
-                }catch(\Exception $e) {
-                    return response()->json([
-                    'error' => [
-                        'message' => 'User not authorized'.$e,
-                        'code' => 400,
-                        ]
-                     ], HttpResponse::HTTP_CONFLICT);
-                 }
-                 $loggedUser['id'] = $value->result->id;
-                 $loggedUser['username'] = $value->result->name;
-                 $loggedUser['email'] = $value->result->email;
-                 $loggedUser['firstname'] = $doctor['firstname'];
-                 $loggedUser['lastname'] = $doctor['lastname'];
-                 $loggedUser['contactNumber'] = $doctor['contactNumber'];
-                 $loggedUser['isVerified'] = $doctor['isVerified'];
-                 $loggedUser['token'] = $value->result->token;
-
-                 //fetch specialization
-                 return  response()->json(['result'=>$loggedUser]);
-
+            return $this->fetchDoctor($value->result->id);
         }
    }
 
@@ -100,25 +79,69 @@ class DoctorController extends TokenAuthController
         $location = $request['location'];
         $query = DB::table('doctors')
                 ->join('cancer_types', 'doctors.specialization', '=', 'cancer_types.id')
-                ->select('doctors.*','cancer_types.*');
+                ->join('users','doctors.userId','=','users.id')
+                ->leftjoin('ratings','ratings.givenTo','=','doctors.userId')
+                ->select('doctors.*','users.email','cancer_types.name as cancerName','ratings.ratingValue');
         if ($specialization) {
             $query = $query->where('doctors.specialization','=',$specialization);
         }
         if ($location) {
             $query = $query->where('doctors.location','=',$location);
         }
-        $doctors = $query->get();
-        return  response()->json(['result'=>$doctors]);           
+
+        $results = $query->get();
+        
+        return  response()->json(['result'=>$this->processedDoctor($results)]);           
     }
 
-    public function fetchDoctor($doctorId) {
-         $doctor = DB::table('doctors')
-                ->join('cancer_types', 'doctors.specialization', '=', 'cancer_types.id')
-                ->select('doctors.*','cancer_types.*')
-                ->where('doctors.userId','=',$doctorId)
-                ->get();
-        return  response()->json(['result'=>$doctor]);           
+    private function processedDoctor($results) {
+        $doctorsList = array();
+        $doctorIds = array_unique((array_column($results, 'userId')));
 
+        foreach ($doctorIds as $id) {
+            $doctor['id'] = $id;
+            $recordsForId = array_filter($results, function($v) use($id){
+             return $v['userId'] == $id; 
+            });
+
+            $ratingValues = array_column($recordsForId,'ratingValue');
+            $sum = 0;
+            foreach ($ratingValues as $ratingValue) {
+                $sum += $ratingValue;
+            }
+            if (count($ratingValues) > 0) {
+                $doctor['rating'] = $sum/count($ratingValues);
+            }
+            $doctorInfo = reset($recordsForId);
+            $doctor['firstname'] = $doctorInfo['firstname'];
+            $doctor['lastname'] = $doctorInfo['lastname'];
+            $doctor['contactNumber'] = $doctorInfo['contactNumber'];
+            $doctor['email'] = $doctorInfo['email'];
+            $doctor['location'] = $doctorInfo['location'];
+            $doctor['specialization'] = $doctorInfo['cancerName'];
+            $doctorsList[] = $doctor;
+        }
+        return $doctorsList;
+    }
+    public function fetchDoctor($doctorId) {
+         try {
+            $results = DB::table('doctors')
+                    ->join('cancer_types', 'doctors.specialization', '=', 'cancer_types.id')
+                    ->join('users','doctors.userId','=','users.id')
+                    ->leftjoin('ratings','ratings.givenTo','=','doctors.userId')
+                    ->select('doctors.*','users.email','cancer_types.name as cancerName','ratings.ratingValue')
+                    ->where('doctors.userId','=',$doctorId)
+                    ->get();
+            $doctors = $this->processedDoctor($results);
+        }catch(\Exception $e) {
+            return response()->json([
+                    'error' => [
+                        'message' => 'User not authorized',
+                        'code' => 400,
+                        ]
+                     ], HttpResponse::HTTP_CONFLICT);
+        }
+        return  response()->json(['result'=>reset($doctors)]);           
     }
 
     /**

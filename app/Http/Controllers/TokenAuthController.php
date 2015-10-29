@@ -97,7 +97,7 @@ public function __construct()
                     ['error' => array('message' => 'token_absent',
                                        'code' => $e->getStatusCode())]);
         }
-        return response()->json(['user' => $user]); 
+        return response()->json(['result' => $user]); 
     }
 
     private function isEmailPresent($email) {

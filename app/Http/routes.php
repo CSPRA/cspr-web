@@ -278,3 +278,12 @@ Route::get('diagnosisResponses/{screeningId}',
    'roles' => ['admin', 'staff','volunteer','doctor']
    ]
   );
+
+// Rating
+
+Route::post('rating',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'rate_user', 
+   'uses' => 'RatingController@create',
+   'roles' => ['admin', 'staff','volunteer','doctor']
+  ]);

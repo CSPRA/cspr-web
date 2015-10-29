@@ -367,8 +367,8 @@ class DiagnosisController extends Controller
             ->select('events.*', 'cancer_types.name as cancerName', 'detection_form.name')
             ->where('events.id','=',$eventId)
             ->get();
-        $event = $this->processedEvents($events)[0];
-            return response()->json(['result' =>$event]);
+        $events = $this->processedEvents($events);
+            return response()->json(['result' =>reset($event)]);
    }
 
    public function assignVolunteers($eventId,Request $request) {
