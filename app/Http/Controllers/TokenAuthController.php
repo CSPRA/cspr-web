@@ -83,17 +83,19 @@ public function __construct()
             }
 
         } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-
-            return response()->json(['token_expired'], $e->getStatusCode());
+            return response()->json(
+                    ['error' => array('message' => 'token_expired',
+                                       'code' => $e->getStatusCode())]);
 
         } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-
-            return response()->json(['token_invalid'], $e->getStatusCode());
+            return response()->json(
+                    ['error' => array('message' => 'token_invalid',
+                                       'code' => $e->getStatusCode())]);
 
         } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
-
-            return response()->json(['token_absent'], $e->getStatusCode());
-
+            return response()->json(
+                    ['error' => array('message' => 'token_absent',
+                                       'code' => $e->getStatusCode())]);
         }
         return response()->json(['user' => $user]); 
     }
