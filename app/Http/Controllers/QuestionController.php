@@ -53,6 +53,8 @@ class QuestionController extends Controller
         return response()->json(['cancerTypes' =>$result]);
     }
 
+    /**************** Section *************************/
+    
     public function createSection(Request $request) {
         $section['name'] = $request->input('name');
         $section['description'] = $request->input('description');
@@ -67,13 +69,20 @@ class QuestionController extends Controller
                     ]
                  ]);
         }
-        return response()->json(['section' =>$result]);
+        return response()->json(['section' => $result]);
     }
 
     public function getSections() {
         $result = Section::all();
-        return response()->json(['sections' =>$result]);
+        return response()->json(['sections' => $result]);
     }
+
+    public function getSection($sectionId) {
+        $result = Section::find($sectionId);
+        return response()->json(['result' => $result]);
+    }
+
+   /**************** Question *************************/
 
     public function addQuestion(Request $request) {
         $question['title'] = $this->mysql_real_escape_string($request->input('title'));

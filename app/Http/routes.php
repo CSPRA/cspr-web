@@ -57,7 +57,7 @@ Route::post('staff/login',
   ['as' => 'login','uses' => 'StaffController@login']
 );
 
-Route::post('createCancerType',
+Route::post('cancerType',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_cancer_type',
   'uses' =>'QuestionController@createCancerType',
@@ -69,7 +69,8 @@ Route::get('cancerTypes',
   ['as' => 'cancerTypes', 'uses'=>'QuestionController@getCancerTypes']
   );
 
-Route::post('createSection',
+// Section
+Route::post('section',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_section',
   'uses' =>'QuestionController@createSection',
@@ -78,9 +79,20 @@ Route::post('createSection',
 );
 
 Route::get('sections',
-  ['as' => 'sections', 'uses'=>'QuestionController@getSections']
-  );
+  ['middleware' => ['jwt.auth','roles'],
+  'as' => 'sections', 
+  'uses'=>'QuestionController@getSections',
+  'roles' => ['admin','staff','volunteer','doctor']
+  ]);
 
+Route::get('section/{sectionId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' => 'fetch_section', 
+  'uses'=>'QuestionController@getSection',
+  'roles' => ['admin','staff','volunteer','doctor']
+  ]);
+
+// Question
 Route::post('addQuestion',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'add_question',
@@ -137,7 +149,9 @@ Route::get('queries/{formId?}',
   ['as' => 'queries', 'uses'=>'DiagnosisController@fetchQueryForDetectionForm']
 );
 
-Route::post('createEvent',
+// Event
+
+Route::post('event',
  ['middleware' => ['jwt.auth','roles'],
   'as' =>'create_event',
   'uses' =>'DiagnosisController@createEvent',
@@ -145,8 +159,18 @@ Route::post('createEvent',
   ]);
 
 Route::get('events',
-   ['as' => 'events', 'uses'=>'DiagnosisController@fetchEvents']
-  );
+ ['middleware' => ['jwt.auth','roles'],
+  'as' =>'fetch_events',
+  'uses' =>'DiagnosisController@fetchEvents',
+  'roles' => ['admin','staff','volunteer','doctor']
+  ]);
+
+Route::get('event/{eventId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'fetch_event',
+  'uses' =>'DiagnosisController@fetchEvent',
+  'roles' => ['admin','staff','volunteer','doctor']
+  ]);
 
 Route::post('assignVolunteers/{eventId}',
   ['middleware' => ['jwt.auth','roles'],

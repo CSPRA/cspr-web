@@ -305,6 +305,8 @@ class DiagnosisController extends Controller
 
     }
 
+   /****************** Event **************************/    
+
    public function createEvent(Request $request) {
      $event = new Event;
      $event->name = $request->input('name');
@@ -328,12 +330,43 @@ class DiagnosisController extends Controller
    }
 
    public function fetchEvents(Request $request) {
+        $cancerType = $request['cancerType'];
+        $events = DB::table('events')
+            ->join('cancer_types', 'cancer_types.id', '=', 'events.cancerId')
+            ->join('detection_form', 'detection_form.id', '=', 'events.formId')
+            ->select('events.*', 'cancer_types.name as cancerName','cancer_types.id as cancerId', 'detection_form.name')
+            ->where('cancer_types.id','=',$cancerType)
+            ->orderBy('events.startDate', 'desc')
+            ->get();
+            return response()->json(['result' => $this->processedEvents($events)]);
+   }
+
+   private function processedEvents($events) {
+    $finalResult =  array();
+    foreach ($events as $event) {
+         $finalObject['id'] = $event['id'];
+         $finalObject['name'] = $event['name'];
+         $finalObject['startDate'] = $event['startDate'];
+         $finalObject['endDate'] = $event['endDate'];
+         $finalObject['eventType'] = $event['eventType'];
+         $finalObject['formId'] = $event['formId'];
+         $cancerType['name'] = $event['cancerName'];
+         $cancerType['id'] = $event['cancerId'];
+         $finalObject['cancerType'] = $cancerType;
+         $finalResult[] = $finalObject;
+    }
+    return $finalResult;
+   }
+
+   public function fetchEvent($eventId) {
         $events = DB::table('events')
             ->join('cancer_types', 'cancer_types.id', '=', 'events.cancerId')
             ->join('detection_form', 'detection_form.id', '=', 'events.formId')
             ->select('events.*', 'cancer_types.name as cancerName', 'detection_form.name')
+            ->where('events.id','=',$eventId)
             ->get();
-            return response()->json(['result' =>$events]);
+        $event = $this->processedEvents($events)[0];
+            return response()->json(['result' =>$event]);
    }
 
    public function assignVolunteers($eventId,Request $request) {
