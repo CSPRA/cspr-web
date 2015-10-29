@@ -331,14 +331,16 @@ class DiagnosisController extends Controller
 
    public function fetchEvents(Request $request) {
         $cancerType = $request['cancerType'];
-        $events = DB::table('events')
-            ->join('cancer_types', 'cancer_types.id', '=', 'events.cancerId')
-            ->join('detection_form', 'detection_form.id', '=', 'events.formId')
-            ->select('events.*', 'cancer_types.name as cancerName','cancer_types.id as cancerId', 'detection_form.name')
-            ->where('cancer_types.id','=',$cancerType)
-            ->orderBy('events.startDate', 'desc')
-            ->get();
-            return response()->json(['result' => $this->processedEvents($events)]);
+        $query = DB::table('events')
+                ->join('cancer_types', 'cancer_types.id', '=', 'events.cancerId')
+                ->join('detection_form', 'detection_form.id', '=', 'events.formId')
+                ->select('events.*', 'cancer_types.name as cancerName','cancer_types.id as cancerId', 'detection_form.name');
+
+        if ($cancerType) {
+            $query = $query->where('cancer_types.id','=',$cancerType);
+        }
+        $events = $query->orderBy('events.startDate', 'desc')->get();
+        return response()->json(['result' => $this->processedEvents($events)]);
    }
 
    private function processedEvents($events) {
