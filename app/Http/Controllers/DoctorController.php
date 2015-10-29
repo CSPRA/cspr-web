@@ -94,6 +94,33 @@ class DoctorController extends TokenAuthController
 
         }
    }
+
+    public function fetchDoctors(Request $request) {
+        $specialization = $request['specialization'];
+        $location = $request['location'];
+        $query = DB::table('doctors')
+                ->join('cancer_types', 'doctors.specialization', '=', 'cancer_types.id')
+                ->select('doctors.*','cancer_types.*');
+        if ($specialization) {
+            $query = $query->where('doctors.specialization','=',$specialization);
+        }
+        if ($location) {
+            $query = $query->where('doctors.location','=',$location);
+        }
+        $doctors = $query->get();
+        return  response()->json(['result'=>$doctors]);           
+    }
+
+    public function fetchDoctor($doctorId) {
+         $doctor = DB::table('doctors')
+                ->join('cancer_types', 'doctors.specialization', '=', 'cancer_types.id')
+                ->select('doctors.*','cancer_types.*')
+                ->where('doctors.userId','=',$doctorId)
+                ->get();
+        return  response()->json(['result'=>$doctor]);           
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *

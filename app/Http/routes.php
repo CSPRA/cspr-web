@@ -183,7 +183,7 @@ Route::get('eventVolunteers/{eventId}',
   ['middleware' => ['jwt.auth','roles'],
   'as' =>'eventVolunteers',
   'uses' =>'DiagnosisController@fetchEventVolunteers',
-  'roles' => ['admin','staff']]
+  'roles' => ['admin','staff',]]
   );
 
 Route::get('volunteer/myScreeningAssignments',[
@@ -191,6 +191,22 @@ Route::get('volunteer/myScreeningAssignments',[
   'as' =>'myScreeningAssignments',
   'uses' =>'VolunteerController@fetchVolunteerEvents',
   'roles' => ['volunteer']
+  ]);
+
+// Doctor
+
+Route::get('doctors',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'fetch_doctors',
+  'uses' =>'DoctorController@fetchDoctors',
+  'roles' => ['admin','staff','volunteer','doctor']
+  ]);
+
+Route::get('doctor/{doctorId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'fetch_doctor',
+  'uses' =>'DoctorController@fetchDoctor',
+  'roles' => ['admin','staff','volunteer','doctor']
   ]);
 
 /******************************/
