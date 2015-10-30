@@ -223,6 +223,13 @@ Route::post('approveDoctor/{doctorId}',
   'roles' => ['admin','staff']
   ]);
 
+Route::get('statistics',
+   ['middleware' => ['jwt.auth','roles'],
+  'as' =>'statistics',
+  'uses' =>'AdminController@fetchStatistics',
+  'roles' => ['admin','staff']
+  ]);
+
 /******************************/
 
 Route::post('patient',

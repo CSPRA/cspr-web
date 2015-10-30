@@ -22,7 +22,7 @@ class AdminController extends TokenAuthController
     }
 
     public function approveVolunteer($volunteerId) {
-         try{
+        try{
             Volunteer::where('userId', $volunteerId)
                       ->update(['isVerified' => true]);
             }catch(\Exception $e) {
@@ -46,6 +46,37 @@ class AdminController extends TokenAuthController
         }
         return response()->json(['result' =>'success']);
 
+    }
+
+    public function fetchStatistics(Request $requests){
+        $startDate = $request['startDate'];
+        $endDate = $request['endDate']; 
+
+        //Fetch registration
+        //Fetch Screening
+        //Fetch Events
+        //Fetch Visits
+
+        $registrationCount = DB::table('patient_history')
+                ->where('created_at','>',$startDate)
+                ->where('created_at','<',$endDate)
+                ->count();
+
+        $screeningCount = DB::table('screenings')
+                ->where('created_at','>',$startDate)
+                ->where('created_at','<',$endDate)
+                ->count();
+
+        $eventCount = DB::table('events')
+                ->where('created_at','>',$startDate)
+                ->where('created_at','<',$endDate)
+                ->count();
+
+        $result['regisrations'] = $registrationCount;
+        $result['screenings'] = $screeningCount;
+        $result['events'] = $eventCount;
+        
+        return response()->json(['result' =>$result]);
     }
 
 }

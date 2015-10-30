@@ -27,6 +27,9 @@ class PatientHistoryTable extends Migration
             $table->foreign('screeningId')->references('id')->on('screenings')->onDelete('set null');
 
             $table->enum('diagnosis_status',array('Pending','Normal','Beginning','Precancer','Suspicious','Detected'));  
+            $table->timestamps();
+
+            $table->unique(array('patientId','eventId'));
 
         });
     }
