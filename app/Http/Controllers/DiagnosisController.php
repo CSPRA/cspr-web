@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Http\Controllers;
@@ -250,7 +251,7 @@ class DiagnosisController extends TokenAuthController
         if ($data) 
             return response()->json($data);
         else 
-            return response()->json(['result' =>'success']);
+            return response()->json(['result' =>array('screeningId'=>$result->screening->id)]);
     }
 
     public function fetchDiagnosisResponses($screeningId) {

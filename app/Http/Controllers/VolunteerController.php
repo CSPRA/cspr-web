@@ -66,7 +66,7 @@ class VolunteerController extends TokenAuthController
             
                 return response()->json([
                    'error' => [
-                    'message' => 'Error while saving Volunteer',
+                    'message' => 'Error while saving Volunteer'.$e,
                     'code' => 400]]);
             }
             
@@ -122,7 +122,7 @@ class VolunteerController extends TokenAuthController
                         'cancer_types.id as cancerId',
                         'cancer_types.name as cancerName',
                         'cancer_types.description as cancerDescription')
-                ->where('volunteerId','=',$value->user->id)
+                ->where('volunteerId','=',$value->result->id)
                 ->get();
 
     $finalResult = array();
@@ -154,15 +154,15 @@ class VolunteerController extends TokenAuthController
                   ->join('patients','patients.id','=','screenings.patientId')
                   ->select('patients.*','screenings.id as screeningId')
                   ->where('eventId','=',$eventId)
-                  ->where('volunteerId','=',$value->user->id)
+                  ->where('volunteerId','=',$value->result->id)
                   ->get();
        $finalResult = array();
        foreach ($patients as $patient) {
        
-         $object['id'] = $patient['id'];
-         $object['name'] = $patient['name'];
-         $object['dob'] = $patient['dob'];
-         $object['gender'] = $patient['gender'];
+        $object['id'] = $patient['id'];
+        $object['name'] = $patient['name'];
+        $object['dob'] = $patient['dob'];
+        $object['gender'] = $patient['gender'];
           $object['maritalStatus'] = $patient['maritalStatus'];
           $object['email'] = $patient['email'];
           $object['annualIncome'] = $patient['annualIncome'];
