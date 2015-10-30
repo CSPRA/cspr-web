@@ -12,7 +12,6 @@ class CreateResponseTable extends Migration
      */
     public function up()
     {
-            Schema::drop('response');
             Schema::create('response', function (Blueprint $table) {
             $table->increments('id');
             
@@ -26,13 +25,7 @@ class CreateResponseTable extends Migration
             $table->decimal('numberAnswer')->nullable();
             $table->boolean('boolAnswer')->nullable();
             
-            $table->integer('optionGroupId')->unsigned()->nullable();
-            $table->foreign('optionGroupId')->references('id')->on('option_groups')->onDelete('set null');
-
-            $table->integer('optionId')->unsigned()->nullable();
-            $table->foreign('optionId')->references('id')->on('options')->onDelete('set null');
-            
-            $table->unique(array('screeningId','queryId','optionGroupId','optionId'));
+            $table->unique(array('screeningId','queryId'));
             $table->timestamps();
         });
     }

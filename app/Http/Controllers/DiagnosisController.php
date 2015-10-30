@@ -25,7 +25,7 @@ use DB;
 use Storage;
 use File;
 
-class DiagnosisController extends Controller
+class DiagnosisController extends TokenAuthController
 {
     /**
      * Display a listing of the resource.
@@ -151,63 +151,118 @@ class DiagnosisController extends Controller
         return array('questions'=>$array);
     }
 
-    public function saveDiagnosisResponses(Request $request) {
-        try {
-            $screening = new Screening();
-            $screening['eventId'] = $request->input('eventId');
-            $screening['patientId'] = $request->input('patientId');
-            $screening['volunteerId'] = $request->input('volunteerId');
+    private function fetchScreening($eventId,$patientId,$volunteerId) {
+        $screening = DB::table('screenings')
+            ->select('screenings.id')
+            ->where('eventId','=',$eventId)
+            ->where('patientId','=',$patientId)
+            ->where('volunteerId','=',$volunteerId)
+            ->get();
+        if ($screening == null) {
+            try {
+                $screening = new Screening();
+                $screening['eventId'] = $eventId;
+                $screening['patientId'] = $patientId;
+                $screening['volunteerId'] = $volunteerId;
 
-            $screening->save();
-
-        }catch(\Exception $e) {
-            return response()->json([
-            'error' => [
-                'message' => 'Could not save screening'.$e->getMessage(),
-                'code' => 101,
-                ]
-             ]); 
-        }
-        $responses = $request->input('responses');
-        $responseToSave = array();
-        foreach ($responses as $inputResponse) {
-            $response['screeningId'] = $screening['id'];
-            $response['queryId'] = $inputResponse['queryId'];
-            if (array_key_exists('textAnswer',$inputResponse)) {
-                $response['textAnswer'] = $inputResponse['textAnswer'];
-            }
-            if (array_key_exists('numberAnswer',$inputResponse)) {
-                $response['numberAnswer'] = $inputResponse['numberAnswer'];
-            }
-            if (array_key_exists('boolAnswer', $inputResponse)) {
-                $response['boolAnswer'] = $inputResponse['boolAnswer'];
-            }
-            if (array_key_exists('optionGroupId', $inputResponse)) {
-                $response['optionGroupId'] = $inputResponse['optionGroupId'];
-            }
-            if (array_key_exists('optionId', $inputResponse)) {
-                $response['optionId'] = $inputResponse['optionId'];
-            }
-            $responseToSave[] = $response;
-        }
-        try {
-            DB::table('response')->insert($responseToSave);
-        }catch(\Exception $e) {
-            return response()->json([
+                $screening->save();
+            }catch(\Exception $e) { 
+                return response()->json([
                 'error' => [
-                    'message' => 'Could not save responses'.$e->getMessage(),
+                    'message' => 'Could not save screening',
                     'code' => 101,
                     ]
-                 ]);
+                 ]); 
+            }
         }
-        return response()->json(['result' =>'success']);
-    }
+        return response()->json(['screening'=> reset($screening)]);   
 
+    }
+    public function saveDiagnosisResponses(Request $request) {
+        $eventId = $request->input('eventId');
+        $patientId = $request->input('patientId');
+
+        $value = $this->getAuthenticatedUser()->getData();
+        $currentUser = $value->result;
+        if ($currentUser->roleId != 5) {
+           return response()->json([
+                'error' => [
+                    'message' => 'Unauthorized Access',
+                    'code' => 101,
+                    ]
+                 ]); 
+        }
+        
+        $volunteerId = $currentUser->id;
+        $result = $this->fetchScreening($eventId,$patientId,$volunteerId)->getData();
+
+        if (property_exists($result,'error')) {
+            return $result;
+        }
+
+        $responses = $request->input('responses');
+        $responseToSave = array();
+        $data = array();
+
+        DB::beginTransaction();
+
+        foreach ($responses as $inputResponse) {
+            $textAnswer = array_key_exists('textAnswer',$inputResponse) ? $inputResponse['textAnswer'] : null;
+            $numberAnswer = array_key_exists('numberAnswer',$inputResponse) ? $inputResponse['numberAnswer'] : null;
+            $boolAnswer = array_key_exists('boolAnswer', $inputResponse) ? $inputResponse['boolAnswer'] : null;
+            $optionAnswer = array_key_exists('optionAnswer', $inputResponse) ? $inputResponse['optionAnswer'] : null;
+
+            try {
+                    $response = Response::create([
+                        'screeningId'   => $result->screening->id,
+                        'queryId'       => $inputResponse['queryId'],  
+                        'textAnswer'    => $textAnswer,
+                        'numberAnswer'  => $numberAnswer,
+                        'boolAnswer'    => $boolAnswer
+                    ]);
+                    if ($optionAnswer != null) {
+                        $options = array();
+                        $optionGroupId = $optionAnswer['groupId'];
+                        $answers = $optionAnswer['answers'];
+
+                        foreach ($answers as $answer) {
+                            $option['responseId'] = $response['id'];
+                            $option['optionGroupId'] = $optionGroupId;
+                            $option['optionId'] = $answer;  
+                            $options[] = $option;
+                        }
+                        
+                        DB::table('option_response')->insert($options);
+                    }
+                }catch (\Exception $e) {
+
+                DB::rollback();
+
+                    $data = array('error' => [
+                    'message' => 'Could not save response',
+                    'code' => 101,
+                    ]);
+                }
+        }
+        
+        DB::commit();
+
+        if ($data) 
+            return response()->json($data);
+        else 
+            return response()->json(['result' =>'success']);
+    }
 
     public function fetchDiagnosisResponses($screeningId) {
         $responses = DB::table('response')
                   ->join('query','query.id', '=', 'response.queryId')
-                  ->select('query.*','response.*')
+                  ->leftjoin('option_response','option_response.responseId','=','response.id')
+                  ->select('query.*','response.id as responseId',
+                                    'response.textAnswer as textAnswer',
+                                    'response.numberAnswer as numberAnswer',
+                                    'response.boolAnswer as boolAnswer',
+                                    'response.queryId as queryId',
+                    'option_response.optionGroupId as optionGroupId','option_response.optionId as optionId')
                   ->get();
         if (count($responses) > 0) { 
             $formId = $responses[0]['formId'];
@@ -223,6 +278,7 @@ class DiagnosisController extends Controller
             $finalSection['responses'] = $children['responses'];
             $finalResult['sections'][] = $finalSection;
         }
+        // var_dump($responses);
         return response()->json(['result' =>$finalResult['sections']]);
   
     }
@@ -247,26 +303,28 @@ class DiagnosisController extends Controller
                 $answerObject = array();
                 switch ($question->type) {
                     case 'text':
+
                         $answer = reset($result);
-                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['answerId'] = $answer['responseId'];
                         $answerObject['textAnswer'] = $answer['textAnswer'];
+
                     break;
 
                     case 'number':
                         $answer = reset($result);
-                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['answerId'] = $answer['responseId'];
                         $answerObject['numberAnswer'] = $answer['numberAnswer'];
                     break;
 
                     case 'boolean':
                         $answer = reset($result);
-                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['answerId'] = $answer['responseId'];
                         $answerObject['boolAnswer'] = $answer['boolAnswer'];
                     break;
 
                     case 'single choice':
                         $answer = reset($result);
-                        $answerObject['answerId'] = $answer['id'];
+                        $answerObject['answerId'] = $answer['responseId'];
                         $optionId = $answer['optionId'];
                         $optionGroupId = $answer['optionGroupId'];
                         $options = array_filter($question->options, function($v) use($optionId,$optionGroupId){
@@ -278,7 +336,7 @@ class DiagnosisController extends Controller
 
                     case 'multiple choice':
                         foreach ($result as $answer) {
-                            $answerObject['answerId'] = $answer['id'];
+                            $answerObject['answerId'] = $answer['responseId'];
                             $optionId = $answer['optionId'];
                             $optionGroupId = $answer['optionGroupId'];
                             $options = array_filter($question->options, function($v) use($optionId,$optionGroupId){

@@ -211,22 +211,6 @@ Route::get('doctor/{doctorId}',
 
 /******************************/
 
-Route::post('volunteer/patient',
-  ['middleware' => ['jwt.auth','roles'],
-   'as' => 'registerPatient', 
-   'uses' => 'PatientController@create',
-   'roles' => ['volunteer']
-   ]
-);
-
-Route::get('volunteer/fetchPatients/{eventId}',
-  ['middleware' => ['jwt.auth','roles'],
-   'as' => 'fetchPatients', 
-   'uses' => 'VolunteerController@fetchPatients',
-   'roles' => ['volunteer']
-  ]
-);
-
 Route::post('patient',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'registerPatient', 
@@ -243,6 +227,45 @@ Route::get('patient/{patientId}',
    ]
 );
 
+Route::get('patients',
+['middleware' => ['jwt.auth','roles'],
+   'as' => 'fetch_patient', 
+   'uses' => 'PatientController@fetchPatients',
+   'roles' => ['admin', 'staff']
+   ]
+);
+
+Route::get('volunteer/patients/{eventId}',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'fetchPatients', 
+   'uses' => 'VolunteerController@fetchPatients',
+   'roles' => ['volunteer']
+  ]
+);
+
+Route::get('doctor/patients',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'fetchPatients', 
+   'uses' => 'DoctorController@fetchPatients',
+   'roles' => ['doctor']
+  ]
+);
+
+Route::post('diagnosisResponses',
+   ['middleware' => ['jwt.auth','roles'],
+   'as' => 'saveDiagnosisResponses', 
+   'uses' => 'DiagnosisController@saveDiagnosisResponses',
+   'roles' => ['admin', 'staff','volunteer']
+   ]);
+
+Route::get('diagnosisResponses/{screeningId}',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'fetchDiagnosisResponse', 
+   'uses' => 'DiagnosisController@fetchDiagnosisResponses',
+   'roles' => ['admin', 'staff','volunteer','doctor']
+   ]
+  );
+
 Route::post('diagnosisImage/{screeningId}',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'saveDiagnosisImage', 
@@ -254,30 +277,12 @@ Route::post('diagnosisImage/{screeningId}',
 Route::get('diagnosisImage/{screeningId}/{imageName}', 
   ['as' => 'diagnosisImage',
    'uses'=> 'DiagnosisController@fetchImage'
-  ]
-  );
+  ]);
 
 Route::get('diagnosisImages/{screeningId}',
   ['as' => 'diagnosisImages',
    'uses' => 'DiagnosisController@fetchImagesForScreening'
-  ]
-);
-
-Route::post('diagnosisResponses',
-   ['middleware' => ['jwt.auth','roles'],
-   'as' => 'saveDiagnosisResponses', 
-   'uses' => 'DiagnosisController@saveDiagnosisResponses',
-   'roles' => ['admin', 'staff','volunteer']
-   ]
-  );
-
-Route::get('diagnosisResponses/{screeningId}',
-  ['middleware' => ['jwt.auth','roles'],
-   'as' => 'fetchDiagnosisResponse', 
-   'uses' => 'DiagnosisController@fetchDiagnosisResponses',
-   'roles' => ['admin', 'staff','volunteer','doctor']
-   ]
-  );
+  ]);
 
 // Rating
 

@@ -24,6 +24,7 @@ class CreateScreeningTable extends Migration
             $table->integer('eventId')->unsigned();
             $table->foreign('eventId')->references('id')->on('events')->onDelete('cascade');
                      
+            $table->unique(array('patientId','volunteerId','eventId'));
             $table->timestamps();
         });
     }

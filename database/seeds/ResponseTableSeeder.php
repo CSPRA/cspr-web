@@ -18,7 +18,8 @@ class ResponseTableSeeder extends Seeder
  
         DB::statement('SET FOREIGN_KEY_CHECKS = 0'); // disable foreign key constraints
         DB::table('response')->truncate();
-        
+        DB::table('option_response')->truncate();
+       
         /**
 		*  Do you smoke?
         */
@@ -27,9 +28,16 @@ class ResponseTableSeeder extends Seeder
             'id'            => 1,
             'screeningId'   => 1,
             'queryId'	    => 1,	
-            'optionGroupId' => 1,
-            'optionId'		=> 1,	
+            	
         ]);
+
+        $option = array(
+          'responseId' => 1,
+          'optionGroupId' => 1,
+          'optionId'    => 1
+          );
+
+        DB::table('option_response')->insert($option);
 
         /**
 		*  Do you chew?
@@ -37,10 +45,15 @@ class ResponseTableSeeder extends Seeder
 		Response::create([
             'id'            => 2,
             'screeningId'   => 1,
-            'queryId'	    => 2,
-            'optionGroupId' => 1,
-            'optionId'		=> 2,	
+            'queryId'	    => 2
         ]);
+      $option = array(
+          'responseId' => 2,
+          'optionGroupId' => 1,
+          'optionId'    => 2
+          );
+
+        DB::table('option_response')->insert($option);
         
         /**
 		*  Do you snuff?
@@ -48,10 +61,16 @@ class ResponseTableSeeder extends Seeder
         Response::create([
             'id'            => 3,
             'screeningId'   => 1,
-            'queryId'	    => 3, 
-            'optionGroupId' => 1,
-            'optionId'		=> 2,	
+            'queryId'	    => 3
         ]);
+
+        $option = array(
+          'responseId' => 3,
+          'optionGroupId' => 1,
+          'optionId'    => 2
+          );
+
+        DB::table('option_response')->insert($option);
 
  		/**
 		*  Do you take alcohol
@@ -59,10 +78,16 @@ class ResponseTableSeeder extends Seeder
         Response::create([
             'id'            => 4,
             'screeningId'   => 1,
-            'queryId'	    => 4,
-            'optionGroupId' => 1,
-            'optionId'		=> 3,	
+            'queryId'	    => 4
         ]);
+        $option = array(
+          'responseId' => 4,
+          'optionGroupId' => 1,
+          'optionId'    => 3
+          );
+
+        DB::table('option_response')->insert($option);
+
 
  		//Children of question 1
 		/**
@@ -102,7 +127,7 @@ class ResponseTableSeeder extends Seeder
 
 		 //Children of question 3: Do you take alcohol
 
-        /**
+    /**
 		* What was your age when you started this habit?
 		*/
  		Response::create([
@@ -138,44 +163,52 @@ class ResponseTableSeeder extends Seeder
         Response::create([
             'id'            => 11,
             'screeningId'   => 1,
-            'queryId'       => 17,  
-            'optionGroupId' => 2,
-            'optionId'      => 2,   
+            'queryId'       => 17  
         ]);
+
+        $option = array(
+          'responseId' => 11,
+          'optionGroupId' => 2,
+          'optionId'    => 2
+          );
+
+        DB::table('option_response')->insert($option);
+
         /**
         *  Choose non veg foods you consume?
         */
         Response::create([
             'id'            => 12,
             'screeningId'   => 1,
-            'queryId'       => 18, 
-            'optionGroupId' => 3,
-            'optionId'      => 6,   
+            'queryId'       => 18   
         ]);
         
-        Response::create([
-            'id'            => 13,
-            'screeningId'   => 1,
-            'queryId'       => 18,  
+          $option = array(
+            'responseId' => 12,
             'optionGroupId' => 3,
-            'optionId'      => 7,   
-        ]);
-        
-        Response::create([
-            'id'            => 14,
-            'screeningId'   => 1,
-            'queryId'       => 18,  
+            'optionId'    => 6
+          );
+          $options[] = $option;
+
+          $option = array(
+            'responseId' => 13,
             'optionGroupId' => 3,
-            'optionId'      => 8,   
-        ]);
-        
-        Response::create([
-            'id'            => 15,
-            'screeningId'   => 1,
-            'queryId'       => 18,  
+            'optionId'    => 7
+          );
+          $options[] = $option;
+          $option = array(
+            'responseId' => 14,
             'optionGroupId' => 3,
-            'optionId'      => 9,   
-        ]);
+            'optionId'    => 8
+          );
+          $options[] = $option;
+          $option = array(
+            'responseId' => 15,
+            'optionGroupId' => 3,
+            'optionId'    => 9
+          );
+          $options[] = $option;
+        DB::table('option_response')->insert($options);
 
         DB::statement('SET FOREIGN_KEY_CHECKS = 1'); // enable foreign key constraints
 
