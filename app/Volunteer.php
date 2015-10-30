@@ -11,5 +11,6 @@ class Volunteer extends Model
     	'firstname',
     	'lastname',
     	'contactNumber',
+    	'isVerified'
     ];
 }

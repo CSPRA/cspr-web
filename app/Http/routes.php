@@ -193,6 +193,13 @@ Route::get('volunteer/myScreeningAssignments',[
   'roles' => ['volunteer']
   ]);
 
+Route::post('approveVolunteer/{volunteerId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'approve_volunteer',
+  'uses' =>'AdminController@approveVolunteer',
+  'roles' => ['admin','staff']
+  ]);
+
 // Doctor
 
 Route::get('doctors',
@@ -207,6 +214,13 @@ Route::get('doctor/{doctorId}',
   'as' =>'fetch_doctor',
   'uses' =>'DoctorController@fetchDoctor',
   'roles' => ['admin','staff','volunteer','doctor']
+  ]);
+
+Route::post('approveDoctor/{doctorId}',
+  ['middleware' => ['jwt.auth','roles'],
+  'as' =>'approve_doctor',
+  'uses' =>'AdminController@approveDoctor',
+  'roles' => ['admin','staff']
   ]);
 
 /******************************/

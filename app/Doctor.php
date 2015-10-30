@@ -13,6 +13,7 @@ class Doctor extends Model
     	'lastname',
     	'contactNumber',
     	'location',
-    	'specialization'
+    	'specialization',
+    	'isVerified'
     ];
 }
