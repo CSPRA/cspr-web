@@ -230,8 +230,11 @@ Route::get('statistics',
   'roles' => ['admin','staff']
   ]);
 
-/******************************/
 
+/******************************/
+/**
+*  API to handle patient 
+*/
 Route::post('patient',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'registerPatient', 
@@ -263,7 +266,11 @@ Route::get('volunteer/patients/{eventId}',
    'roles' => ['volunteer']
   ]
 );
+/************************/
 
+/**
+* API to handle doctor 
+*/
 Route::get('doctor/patients',
   ['middleware' => ['jwt.auth','roles'],
    'as' => 'fetchPatients', 
@@ -271,6 +278,17 @@ Route::get('doctor/patients',
    'roles' => ['doctor']
   ]
 );
+
+/**
+*  API to handle appointment
+*/
+
+Route::post('appointment',
+  ['middleware' => ['jwt.auth','roles'],
+   'as' => 'appointment', 
+   'uses' => 'DoctorController@createAppointment',
+   'roles' => ['admin', 'staff','volunteer']
+  ]);
 
 Route::post('diagnosisResponses',
    ['middleware' => ['jwt.auth','roles'],
@@ -313,3 +331,5 @@ Route::post('rating',
    'uses' => 'RatingController@create',
    'roles' => ['admin', 'staff','volunteer','doctor']
   ]);
+
+// 

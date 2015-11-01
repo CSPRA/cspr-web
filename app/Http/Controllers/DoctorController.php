@@ -9,6 +9,7 @@ use Illuminate\Http\Response as HttpResponse;
 use App\Http\Controllers\Controller;
 
 use App\Doctor;
+use App\Appointment;
 use DB;
 
 class DoctorController extends TokenAuthController
@@ -142,6 +143,26 @@ class DoctorController extends TokenAuthController
                      ], HttpResponse::HTTP_CONFLICT);
         }
         return  response()->json(['result'=>reset($doctors)]);           
+    }
+
+    public function createAppointment(Request $request) {
+        $value = $this->getAuthenticatedUser()->getData();
+        try {
+            $appointment = Appointment::create([
+            'doctorId'        => $request->input('doctorId'),
+            'screeningId'     => $request->input('screeningId'),
+            'requestedBy'     => $value->result->id,
+            'status'          => 'pending'
+            ]); 
+        }catch(\Exception $e) {
+            return response()->json([
+                    'error' => [
+                        'message' => 'Could not assign doctor'.$e,
+                        'code' => 400,
+                        ]
+                     ], HttpResponse::HTTP_CONFLICT);
+        }
+        return response()->json(['result'=> $appointment]); 
     }
 
     /**
