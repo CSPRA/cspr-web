@@ -149,13 +149,15 @@ class VolunteerController extends TokenAuthController
    }
 
    public function fetchPatients($eventId) {
+
       $value = $this->getAuthenticatedUser()->getData();
-      $patients = DB::table('screenings')
-                  ->join('patients','patients.id','=','screenings.patientId')
-                  ->select('patients.*','screenings.id as screeningId')
-                  ->where('eventId','=',$eventId)
-                  ->where('volunteerId','=',$value->result->id)
-                  ->get();
+      $patients = DB::table('patient_history')
+          ->join('patients','patients.id','=','patient_history.patientId')
+          ->select('patients.*','patient_history.screeningId as screeningId')
+          ->where('patient_history.eventId','=',$eventId)
+          ->where('patient_history.registeredBy','=',$value->result->id)
+          ->get();
+
        $finalResult = array();
        foreach ($patients as $patient) {
        
