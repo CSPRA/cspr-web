@@ -32,7 +32,7 @@ class CreatePatientsTable extends Migration
 
             $table->string('voterId')->nullable();
             $table->string('adharId')->nullable();
-            $table->unique( array('voterId','adharId'));
+            // $table->unique( array('voterId','adharId'));
 
             $table->timestamps();
         });

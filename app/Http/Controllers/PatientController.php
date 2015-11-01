@@ -42,9 +42,7 @@ class PatientController extends Controller
      */
     public function create(Request $request)
     {
-        DB::beginTransaction();
 
-        try {
             $patient = new Patient();
             $patient['name'] = $request->input('name');
             $patient['dob'] =  $request->input('dob');
@@ -64,6 +62,58 @@ class PatientController extends Controller
             $patient['voterId'] = $request->input('voterId');
             $patient['adharId'] = $request->input('adharId');
 
+            $missingParameters = array();
+
+            if ($patient['name'] == null) {
+                $missingParameters[] = 'name';
+            }
+            if ($patient['dob'] == null) {
+                $missingParameters[] = 'dob';
+            }
+            if ($patient['gender'] == null) {
+                $missingParameters[] = 'gender';
+            }
+            if ($patient['maritalStatus'] == null) {
+                $missingParameters[] = 'maritalStatus';
+            }
+            if ($patient['address'] == null) {
+                $missingParameters[] = 'address';
+            }
+            if ($patient['mobileNumber'] == null) {
+                $missingParameters[] = 'mobileNumber';
+            }
+            if ($patient['annualIncome'] == null) {
+                $missingParameters[] = 'annualIncome';
+            }
+            if ($patient['occupation'] == null) {
+                $missingParameters[] = 'occupation';
+            }
+            if ($patient['education'] == null) {
+                $missingParameters[] = 'education';
+            }
+            if ($patient['religion'] == null) {
+                $missingParameters[] = 'religion';
+            }
+            if ($patient['aliveChildrenCount'] == null) {
+                $missingParameters[] = 'aliveChildrenCount';
+            }
+            if ($patient['deceasedChildrenCount'] == null) {
+                $missingParameters[] = 'deceasedChildrenCount';
+            }
+
+            if (count($missingParameters) > 0) {
+                $missing = '';
+                foreach ($missingParameters as $parameters) {
+                    $missing .= ' '.$parameters;
+                }
+                return response()->json([
+                   'error' => [
+                    'message' => 'Missing parameters:'.$missing,
+                    'code' => 400]]);
+            }
+        DB::beginTransaction();
+
+        try {
             $patient->save();
 
         } catch (\Exception $e) {
@@ -144,12 +194,25 @@ class PatientController extends Controller
 
          $eventDetails['id'] = $patient['eventId'];
          $eventDetails['name'] = $patient['eventName'];
-        $finalResult['id'] = $patient['id'];
+         $finalResult['id'] = $patient['id'];
         $finalResult['personalDetails'] = $personalDetails;
         $finalResult['event'] = $eventDetails;
         $finalResult['diagnosis_status'] = $patient['diagnosis_status'];
         $finalResult['registeredBy'] = array('id'=>$patient['userId'],'name'=>$patient['userName']);
         return  response()->json(['result'=>$finalResult]);
+    }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     * 
+     * This method returns different results based on user role
+     * For volunteer: This is will return 
+     */
+    
+    public function fetchPatients(Request $request) {
+        //
     }
 
     /**
