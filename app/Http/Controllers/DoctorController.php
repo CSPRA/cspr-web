@@ -157,7 +157,7 @@ class DoctorController extends TokenAuthController
         }catch(\Exception $e) {
             return response()->json([
                     'error' => [
-                        'message' => 'Could not assign doctor'.$e,
+                        'message' => 'Could not assign doctor',
                         'code' => 400,
                         ]
                      ], HttpResponse::HTTP_CONFLICT);

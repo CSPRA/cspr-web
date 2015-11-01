@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\Volunteer;
 use App\Doctor;
+use DB;
 
 class AdminController extends TokenAuthController
 {
@@ -48,7 +49,7 @@ class AdminController extends TokenAuthController
 
     }
 
-    public function fetchStatistics(Request $requests){
+    public function fetchStatistics(Request $request){
         $startDate = $request['startDate'];
         $endDate = $request['endDate']; 
 
@@ -72,7 +73,7 @@ class AdminController extends TokenAuthController
                 ->where('created_at','<',$endDate)
                 ->count();
 
-        $result['regisrations'] = $registrationCount;
+        $result['registrations'] = $registrationCount;
         $result['screenings'] = $screeningCount;
         $result['events'] = $eventCount;
         

@@ -26,7 +26,7 @@ class CreateAppointmentsTable extends Migration
 
                 $table->date('date')->nullable();
                 $table->time('time')->nullable();
-
+                $table->unique(array('doctorId','screeningId'));
                 $table->enum('status',array('Pending','Scheduled','Finished'));
                 $table->timestamps();
             });

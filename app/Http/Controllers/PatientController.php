@@ -100,6 +100,10 @@ class PatientController extends Controller
             if ($patient['deceasedChildrenCount'] == null) {
                 $missingParameters[] = 'deceasedChildrenCount';
             }
+            if ($request->input('eventId') == null) {
+                $missingParameters[] = 'eventId';
+            }
+
 
             if (count($missingParameters) > 0) {
                 $missing = '';
